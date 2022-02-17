@@ -16,6 +16,10 @@ export default new Vuetify({
         success: "#4CAF50",
         warning: "#FFC107",
       },
+      dark: {
+        primary: "#202020",
+        secondary: "#B7A587",
+      },
     },
   },
 });
