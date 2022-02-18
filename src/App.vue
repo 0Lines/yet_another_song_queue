@@ -12,7 +12,7 @@
 
     <v-footer color="primary" dark app>
       <v-col class="text-center" cols="12">
-        O ano é {{ new Date().getFullYear() }} e teu pai ainda...
+        O ano é {{ new Date().getFullYear() }} e teu pai ainda PASSA NO AMEX...
       </v-col>
     </v-footer>
   </v-app>
