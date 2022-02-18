@@ -10,6 +10,7 @@
                     prepend-inner-icon="mdi-magnify"
                     hide-details
                 ></v-text-field>
+                <v-icon>mdi-magnify</v-icon>
             </v-col>
         </v-row>
     </v-container>
