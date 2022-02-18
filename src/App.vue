@@ -34,5 +34,9 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
+  .round-container {
+      border: 3px solid #B7A587 !important;
+      border-radius: 4px !important;
+  }
 </style>
