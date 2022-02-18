@@ -3,7 +3,7 @@ import VueRouter from "vue-router";
 
 Vue.use(VueRouter);
 
-const Home = import("@/components/Home.vue");
+import Home from "@/components/Home.vue";
 
 const routes = [
     {
