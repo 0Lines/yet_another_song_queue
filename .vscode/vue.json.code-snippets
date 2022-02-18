@@ -1,0 +1,31 @@
+{
+    "defaultCode": {
+        "prefix": "defaultPattern",
+        "body": [
+            "<template>",
+            "",
+            "</template>",
+            "",
+            "<script>",
+            "",
+            "export default {",
+            "    props: {},",
+            "    mixins: {},",
+            "    data(){",
+            "        return {",
+            "        }",
+            "    },",
+            "    directives: {},",
+            "    components: {},",
+            "    computed: {},",
+            "    watch: {},",
+            "    methods: {},",
+            "}",
+            "</script>",
+            "",
+            "<style>",
+            "</style>"
+        ],
+        "description": "defaultCode"
+    },
+}
