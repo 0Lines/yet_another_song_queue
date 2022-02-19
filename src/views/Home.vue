@@ -16,6 +16,9 @@
                         @keyup.enter="validateAndSong"
                     ></v-text-field>
                 </v-sheet>
+                <v-container class="round-container pa-0 my-5">
+                    <PlayingSong />
+                </v-container>
                 <v-list class="round-container">
                     <SongListCard v-for="(song, n) in songs" :key="n" :index="n" :song="song" @deleteSong="remove"/>
                 </v-list>
@@ -26,6 +29,7 @@
 
 <script>
 import SongListCard from "@/components/SongListCard.vue"
+import PlayingSong from "@/components/PlayingSong.vue"
 
 export default {
     props: {},
@@ -41,7 +45,10 @@ export default {
         }
     },
     directives: {},
-    components: { SongListCard },
+    components: { 
+        SongListCard, 
+        PlayingSong,
+    },
     computed: {},
     watch: {},
     methods: {

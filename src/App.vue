@@ -1,9 +1,6 @@
 <template>
   <v-app>
-    <v-app-bar color="primary" dark flat rounded app>
-      <v-toolbar-title>Yet Another Song Queue</v-toolbar-title>
-    </v-app-bar>
-
+    <AppBar />
     <v-main app>
       <transition name="fade">
         <router-view></router-view>
@@ -19,6 +16,8 @@
 </template>
 
 <script>
+import AppBar from "@/components/AppBar.vue"
+
 export default {
     props: {},
     mixins: {},
@@ -27,7 +26,9 @@ export default {
         }
     },
     directives: {},
-    components: {},
+    components: {
+      AppBar
+    },
     computed: {},
     watch: {},
     methods: {},
