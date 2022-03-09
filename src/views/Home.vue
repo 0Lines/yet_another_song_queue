@@ -17,7 +17,7 @@
                     ></v-text-field>
                 </v-sheet>
                 <v-container class="round-container pa-0 my-5">
-                    <PlayingSong />
+                    <PlayingSong :playingSong="playing" :thumbsrc="thumbsrc"/>
                 </v-container>
                 <v-list v-if="songs.length > 0" class="round-container">
                     <SongListCard 
@@ -46,13 +46,19 @@
 <script>
 import SongListCard from "@/components/SongListCard.vue"
 import PlayingSong from "@/components/PlayingSong.vue"
-import ytdl from "ytdl-core"
 
 export default {
     props: {},
     mixins: {},
     data(){
         return {
+            playing: {
+                title: "Playing Sound",
+                ownerChannelName: "Ellie Goulding",
+                thumbnails: [{
+                    url: "https://cdn.vuetifyjs.com/images/cards/halcyon.png",
+                }]
+            },
             songs: [],
             songUrl: "",
         }
@@ -62,12 +68,16 @@ export default {
         SongListCard, 
         PlayingSong,
     },
-    computed: {},
+    computed: {
+        thumbsrc() {
+            return this.playing.thumbnails[0].url;
+        }
+    },
     watch: {},
     methods: {
         async validateAndAddSong() {
-            const info = await ytdl.getInfo(this.songUrl);
-            console.log(info);
+            const videoInfo = await this.axios.post('/video',{url: this.songUrl});
+            this.playing = videoInfo.data;
         },
         remove(index) {
             this.songs.splice(index, 1);
