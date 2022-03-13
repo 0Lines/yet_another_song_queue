@@ -1,87 +1,70 @@
 <template>
-    <v-container class="d-flex flex-column">
-        <v-row no-gutters class="justify-center">
-            <v-col cols="10">
-                <v-sheet class="round-container pa-2 my-5">
+    <v-card tile height="100vh">
+        <AppBar />
+
+        <v-main app>
+            <v-container class="pa-6">
+                <v-sheet class="round-container pa-2 mb-5">
                     <v-text-field
+                        v-model="searchedSong"
                         label="Search"
+                        color="secondary"
                         single-line
                         outlined
-                        color="secondary"
-                        prepend-inner-icon="mdi-magnify"
                         hide-details
                         dense
-                        height="20px"
-                        v-model="songUrl"
-                        @keyup.enter="validateAndAddSong"
+                        prepend-inner-icon="mdi-magnify"
+                        @keydown.enter="validateAndAddSong"
                     ></v-text-field>
                 </v-sheet>
-                <v-container class="round-container pa-0 my-5">
-                    <PlayingSong :playingSong="playing" :thumbsrc="thumbsrc"/>
-                </v-container>
-                <v-list v-if="songs.length > 0" class="round-container">
-                    <SongListCard 
-                        v-for="(song, n) in songs" 
-                        :key="n" 
-                        :index="n" 
-                        :song="song" 
-                        @deleteSong="remove"
-                    />
-                </v-list>
-                <v-container v-else class="round-container pa-0 my-5">
-                    <v-card elevation="0">
-                        <v-card-title class="justify-center">
-                            <span>Your playlist is empty!🤠</span>
-                        </v-card-title>
-                        <v-card-text class="text-center">
-                            Add songs by pasting the youtube or spotify link into the search bar. 🔥
-                        </v-card-text>
-                    </v-card>
-                </v-container>
+
+				<PlayingSong :song="currentPlayingSong" class="round-container my-5"/>
+
+				<PlayList class="round-container"/>
+            </v-container>
+        </v-main>
+
+        <v-footer color="primary" app>
+            <v-col class="text-center" cols="12">
+                O ano é {{ new Date().getFullYear() }} e teu pai ainda PASSA NO AMEX...
             </v-col>
-        </v-row>
-    </v-container>
+        </v-footer>
+    </v-card>
 </template>
 
 <script>
-import SongListCard from "@/components/SongListCard.vue"
+import AppBar from "@/components/AppBar.vue"
 import PlayingSong from "@/components/PlayingSong.vue"
+import PlayList from '@/components/PlayList.vue'
+import Song from "@/models/Song.js"
 
 export default {
     props: {},
     mixins: {},
     data(){
         return {
-            playing: {
-                title: "Playing Sound",
-                ownerChannelName: "Ellie Goulding",
-                thumbnails: [{
-                    url: "https://cdn.vuetifyjs.com/images/cards/halcyon.png",
-                }]
-            },
+            searchedSong: "",
             songs: [],
-            songUrl: "",
+            currentPlayingSong: new Song(
+                {
+					title: "Playing Sound",
+					ownerChannelName: "Ellie Goulding",
+					thumbnails: [{ url: "https://cdn.vuetifyjs.com/images/cards/halcyon.png" }] 
+				}
+            ),
         }
     },
     directives: {},
     components: { 
-        SongListCard, 
-        PlayingSong,
+        AppBar, PlayList, PlayingSong,
     },
-    computed: {
-        thumbsrc() {
-            return this.playing.thumbnails[0].url;
-        }
-    },
+    computed: {},
     watch: {},
     methods: {
         async validateAndAddSong() {
-            const videoInfo = await this.axios.post('/video',{url: this.songUrl});
-            this.playing = videoInfo.data;
-        },
-        remove(index) {
-            this.songs.splice(index, 1);
-        },
+            const videoInfo = await this.axios.post('/video',{url: this.searchedSong});
+            this.currentPlayingSong = new Song(videoInfo.data);
+        }
     },
 }
 </script>

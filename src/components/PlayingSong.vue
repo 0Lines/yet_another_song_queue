@@ -1,12 +1,13 @@
 <template>
-    <v-card dark>
-        <div class="d-flex flex-no-wrap">
+    <v-card flat>
+        <div class="d-flex">
             <v-avatar class="ma-3" size="125" tile>
-                <v-img :src="thumbsrc"></v-img>
+                <v-img :src="song.thumbnails[0].url"></v-img>
             </v-avatar>
+			
             <div>
-                <v-card-title class="text-h5">{{ playingSong.title }}</v-card-title>
-                <v-card-subtitle>{{ playingSong.ownerChannelName }}</v-card-subtitle>
+                <v-card-title class="text-h5">{{ song.title }}</v-card-title>
+                <v-card-subtitle>{{ song.ownerChannelName }}</v-card-subtitle>
             </div>
         </div>
     </v-card>
@@ -16,14 +17,9 @@
 
 export default {
     props: {
-        playingSong:  {
-            type: Object,
-            required: true
-        },
-        thumbsrc: {
-            type: String,
-            required: true
-        }
+        song: {
+			type: Object
+		}
     },
     mixins: {},
     data(){

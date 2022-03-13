@@ -1,5 +1,5 @@
 <template>
-    <v-app-bar color="primary" dark flat rounded app>
+    <v-app-bar color="primary" flat app>
         <v-toolbar-title>Yet Another Song Queue</v-toolbar-title>
         <v-spacer></v-spacer>
 
@@ -9,7 +9,6 @@
             <img alt="user" src="https://cdn.pixabay.com/photo/2020/06/24/19/12/cabbage-5337431_1280.jpg">
         </v-avatar>
     </v-app-bar>
-
 </template>
 
 <script>

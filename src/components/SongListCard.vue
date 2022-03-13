@@ -1,7 +1,7 @@
 <template>
     <v-list-item>
         <v-list-item-avatar>
-            <v-icon class="secondary" dark>mdi-music</v-icon>
+            <v-icon class="secondary">mdi-music</v-icon>
         </v-list-item-avatar>
 
         <v-list-item-content>
@@ -11,7 +11,7 @@
         </v-list-item-content>
 
         <v-list-item-action>
-            <v-btn @click="deleteSong" icon>
+            <v-btn @click="remove" icon>
                 <v-icon color="warning">mdi-close</v-icon>
             </v-btn>
         </v-list-item-action>
@@ -41,9 +41,9 @@ export default {
     computed: {},
     watch: {},
     methods: {
-        deleteSong() {
+        remove() {
             if(confirm("Tem certeza que deseja remover essa musica?"))
-                this.$emit("deleteSong", this.index);
+                this.$emit("remove", this.index);
         }
     },
 }
