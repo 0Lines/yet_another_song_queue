@@ -5,9 +5,9 @@
         </v-list-item-avatar>
 
         <v-list-item-content>
-            <v-list-item-title>{{ song.name }}</v-list-item-title>
+            <v-list-item-title>{{ song.title }}</v-list-item-title>
 
-            <v-list-item-subtitle>{{ song.artist }}</v-list-item-subtitle>
+            <v-list-item-subtitle>{{ song.ownerChannelName }}</v-list-item-subtitle>
         </v-list-item-content>
 
         <v-list-item-action>
@@ -20,6 +20,8 @@
 
 <script>
 
+import Song from "@/models/Song.js"
+
 export default {
     props: {
         index: {
@@ -28,7 +30,7 @@ export default {
         },
         song: {
             required: true,
-            type: Object,
+            type: Song,
         }
     },
     mixins: {},

@@ -2,7 +2,7 @@
 	<v-card flat>
 		<v-list v-if="playList.length > 0">
 			<SongListCard 
-				v-for="(song, n) in songs" 
+				v-for="(song, n) in playList" 
 				:key="n" 
 				:index="n" 
 				:song="song" 
@@ -19,6 +19,8 @@
 
 <script>
 
+import SongListCard from "@/components/SongListCard.vue"
+
 export default {
 	props: {
 		playList: {
@@ -32,7 +34,9 @@ export default {
 		}
 	},
 	directives: {},
-	components: {},
+	components: {
+		SongListCard,
+	},
 	computed: {},
 	watch: {},
 	methods: {

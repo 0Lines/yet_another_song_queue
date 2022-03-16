@@ -14,11 +14,12 @@
 </template>
 
 <script>
+import Song from "@/models/Song.js"
 
 export default {
     props: {
         song: {
-			type: Object
+			type: Song,
 		}
     },
     mixins: {},

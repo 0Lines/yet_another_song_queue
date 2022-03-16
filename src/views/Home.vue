@@ -18,9 +18,9 @@
                     ></v-text-field>
                 </v-sheet>
 
-				<PlayingSong :song="currentPlayingSong" class="round-container my-5"/>
+				<PlayingSong v-if="songs.length > 0" :song="currentPlayingSong" class="round-container my-5"/>
 
-				<PlayList class="round-container"/>
+				<PlayList :playList="songs" class="round-container"/>
             </v-container>
         </v-main>
 
@@ -63,6 +63,10 @@ export default {
     methods: {
         async validateAndAddSong() {
             const videoInfo = await this.axios.post('/video',{url: this.searchedSong});
+            const video = new Song(videoInfo.data);
+
+            this.songs.push(video);
+
             this.currentPlayingSong = new Song(videoInfo.data);
         }
     },
