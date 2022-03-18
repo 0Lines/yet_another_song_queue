@@ -18,9 +18,13 @@
                     ></v-text-field>
                 </v-sheet>
 
-				<PlayingSong v-if="songs.length > 0" :song="currentPlayingSong" class="round-container my-5"/>
+				<PlayingSong 
+                    v-if="playlist.songs.length > 0" 
+                    :song="playlist.playingSong" 
+                    class="round-container my-5"
+                />
 
-				<PlayList :playList="songs" class="round-container"/>
+				<PlayList :playList="playlist.songs" class="round-container"/>
             </v-container>
         </v-main>
 
@@ -36,7 +40,9 @@
 import AppBar from "@/components/AppBar.vue"
 import PlayingSong from "@/components/PlayingSong.vue"
 import PlayList from '@/components/PlayList.vue'
-import Song from "@/models/Song.js"
+
+import { mapState } from 'vuex'
+import { mapActions } from 'vuex'
 
 export default {
     props: {},
@@ -44,21 +50,20 @@ export default {
     data(){
         return {
             searchedSong: "",
-            songs: [],
-            currentPlayingSong: new Song(
-                {
-					title: "Playing Sound",
-					ownerChannelName: "Ellie Goulding",
-					thumbnails: [{ url: "https://cdn.vuetifyjs.com/images/cards/halcyon.png" }] 
-				}
-            ),
         }
     },
     directives: {},
     components: { 
-        AppBar, PlayList, PlayingSong,
+        AppBar, 
+        PlayList, 
+        PlayingSong,
     },
-    computed: {},
+    computed: {
+        ...mapState({
+            playlist: state => state.playlist,
+        }),
+        ...mapActions(['playlist/loga'])
+    },
     watch: {},
     methods: {
         async validateAndAddSong() {
@@ -68,8 +73,13 @@ export default {
             this.songs.push(video);
 
             this.currentPlayingSong = new Song(videoInfo.data);
-        }
+        },
     },
+    mounted() {
+        console.log(this.playlist);
+        this.$store.dispatch('playlist/loga');
+        this.$store.dispatch('loga');
+    }
 }
 </script>
 
