@@ -1,12 +1,9 @@
-import Vue from "vue";
-import Vuex from "vuex";
 import axios from 'axios';
 
 import Song from "@/models/Song.js"
 
-Vue.use(Vuex);
-
-export default new Vuex.Store({
+export default {
+	namespaced: true,
 	state: {
 		songs: [],
 		playingSong: {},
@@ -20,9 +17,9 @@ export default new Vuex.Store({
 			store.state.songs.push(video);
 			store.state.playingSong = new Song(videoInfo.data);
 		},
-		loga({ state, commit, rootState }) {
+		loga(store, { state, commit, rootState }) {
 			console.log('TA TUDO LOGADO')
 		},
 	},
 	modules: {},
-});
+};
