@@ -5,9 +5,9 @@ import store from "./store";
 import vuetify from "./plugins/vuetify";
 import axios from 'axios';
 
-import { io } from "socket.io-client";
+// import { io } from "socket.io-client";
 
-const socket = io(process.env.VUE_APP_SOCKET_URI);
+// const socket = io(process.env.VUE_APP_SOCKET_URI);
 
 Vue.config.productionTip = false;
 

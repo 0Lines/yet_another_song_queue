@@ -1,5 +1,3 @@
-import axios from 'axios';
-
 import Song from "@/models/Song.js"
 
 export default {
@@ -11,14 +9,14 @@ export default {
 	mutations: {},
 	actions: {
 		async validateAndAddSong(store, param) {
-			const videoInfo = await axios.post('/video', {url: param.url});
+			const videoInfo = await this._vm.axios.post('/video', {url: param.url});
 			const video = new Song(videoInfo.data);
 
 			store.state.songs.push(video);
 			store.state.playingSong = new Song(videoInfo.data);
 		},
-		loga(store, { state, commit, rootState }) {
-			console.log('TA TUDO LOGADO')
+		async removeSong(store, param) {
+			store.state.songs.splice(param.index, 1);
 		},
 	},
 	modules: {},

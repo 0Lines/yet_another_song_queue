@@ -1,29 +1,28 @@
 <template>
     <v-card tile height="100vh">
         <AppBar />
-
         <v-main app>
             <v-container class="pa-6">
                 <v-sheet class="round-container pa-2 mb-5">
                     <v-text-field
-                        v-model="searchedSong"
+                        dense
+                        outlined
+                        single-line
+                        hide-details
                         label="Search"
                         color="secondary"
-                        single-line
-                        outlined
-                        hide-details
-                        dense
                         prepend-inner-icon="mdi-magnify"
+                        v-model="searchedSong"
+                        :loading="loadingSong"
+                        :disabled="loadingSong"
                         @keydown.enter="validateAndAddSong"
                     ></v-text-field>
                 </v-sheet>
-
 				<PlayingSong 
                     v-if="playlist.songs.length > 0" 
                     :song="playlist.playingSong" 
                     class="round-container my-5"
                 />
-
 				<PlayList :playList="playlist.songs" class="round-container"/>
             </v-container>
         </v-main>
@@ -42,7 +41,6 @@ import PlayingSong from "@/components/PlayingSong.vue"
 import PlayList from '@/components/PlayList.vue'
 
 import { mapState } from 'vuex'
-import { mapActions } from 'vuex'
 
 export default {
     props: {},
@@ -50,6 +48,7 @@ export default {
     data(){
         return {
             searchedSong: "",
+            loadingSong: false,
         }
     },
     directives: {},
@@ -62,24 +61,15 @@ export default {
         ...mapState({
             playlist: state => state.playlist,
         }),
-        ...mapActions(['playlist/loga'])
     },
     watch: {},
     methods: {
         async validateAndAddSong() {
-            const videoInfo = await this.axios.post('/video',{url: this.searchedSong});
-            const video = new Song(videoInfo.data);
-
-            this.songs.push(video);
-
-            this.currentPlayingSong = new Song(videoInfo.data);
+            this.loadingSong = true;
+            await this.$store.dispatch('playlist/validateAndAddSong', {url: this.searchedSong})
+            this.loadingSong = false;
         },
     },
-    mounted() {
-        console.log(this.playlist);
-        this.$store.dispatch('playlist/loga');
-        this.$store.dispatch('loga');
-    }
 }
 </script>
 
