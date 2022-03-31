@@ -11,7 +11,7 @@
 		</v-list>
 
 		<template v-else>
-			<v-card-title class="justify-center text-center">Your playlist is empty!🤠</v-card-title>
+			<v-card-title class="justify-center text-center">Your playlist is empty! 🤠</v-card-title>
 			<v-card-text class="text-center">Add songs by pasting the youtube or spotify link into the search bar. 🔥</v-card-text>
 		</template>
 	</v-card>

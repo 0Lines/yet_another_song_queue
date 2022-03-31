@@ -3,21 +3,7 @@
         <AppBar />
         <v-main app>
             <v-container class="pa-6">
-                <v-sheet class="round-container pa-2 mb-5">
-                    <v-text-field
-                        dense
-                        outlined
-                        single-line
-                        hide-details
-                        label="Search"
-                        color="secondary"
-                        prepend-inner-icon="mdi-magnify"
-                        v-model="searchedSong"
-                        :loading="loadingSong"
-                        :disabled="loadingSong"
-                        @keydown.enter="validateAndAddSong"
-                    ></v-text-field>
-                </v-sheet>
+                <SearchBar />
 				<PlayingSong 
                     v-if="playlist.songs.length > 0" 
                     :song="playlist.playingSong" 
@@ -29,33 +15,32 @@
 
         <v-footer color="primary" app>
             <v-col class="text-center" cols="12">
-                O ano é {{ new Date().getFullYear() }} e teu pai ainda PASSA NO AMEX...
+                Yet Another Song Queue - Under GPL-3.0 License, {{ new Date().getFullYear() }}
             </v-col>
         </v-footer>
     </v-card>
 </template>
 
 <script>
-import AppBar from "@/components/AppBar.vue"
-import PlayingSong from "@/components/PlayingSong.vue"
+import AppBar from '@/components/AppBar.vue'
+import PlayingSong from '@/components/PlayingSong.vue'
 import PlayList from '@/components/PlayList.vue'
+import SearchBar from '@/components/SearchBar.vue'
 
 import { mapState } from 'vuex'
 
 export default {
     props: {},
     mixins: {},
-    data(){
-        return {
-            searchedSong: "",
-            loadingSong: false,
-        }
+    data() {
+        return { }
     },
     directives: {},
     components: { 
         AppBar, 
         PlayList, 
         PlayingSong,
+        SearchBar,
     },
     computed: {
         ...mapState({
@@ -63,13 +48,7 @@ export default {
         }),
     },
     watch: {},
-    methods: {
-        async validateAndAddSong() {
-            this.loadingSong = true;
-            await this.$store.dispatch('playlist/validateAndAddSong', {url: this.searchedSong})
-            this.loadingSong = false;
-        },
-    },
+    methods: {},
 }
 </script>
 
