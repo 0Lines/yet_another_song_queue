@@ -1,48 +1,89 @@
 <template>
-    <v-app-bar color="primary" flat app>
-        <v-toolbar-title>Yet Another Song Queue</v-toolbar-title>
-        <v-spacer></v-spacer>
+	<v-app-bar color="accent" flat app>
+		<v-toolbar-title>Yet Another Song Queue</v-toolbar-title>
+		<v-spacer></v-spacer>
+		<v-menu
+			v-model="menu"
+			:close-on-content-click="false"
+			:nudge-width="200"
+			offset-y
+			bottom
+			open-on-hover
+			open-on-click
+		>
+			<template v-slot:activator="{ on, attrs }">
+				<v-sheet v-bind="attrs" v-on="on" color="accent">
+					<span class="mr-3">{{ fullname }}</span>
+					<v-avatar size="45">
+						<img :src="profilesrc">
+					</v-avatar>
+				</v-sheet>
+			</template>
 
-        <span class="mr-3">{{random_name}}</span>
-        <v-avatar size="45">
-            <!-- gerar imagem random também -->
-            <img alt="user" src="https://cdn.pixabay.com/photo/2020/06/24/19/12/cabbage-5337431_1280.jpg">
-        </v-avatar>
-    </v-app-bar>
+			<v-card>
+				<v-list>
+					<v-list-item>
+						<v-list-item-avatar>
+							<v-avatar size="45">
+								<img :src="profilesrc">
+							</v-avatar>
+						</v-list-item-avatar>
+
+						<v-list-item-content>
+							<v-list-item-title>{{ fullname }}</v-list-item-title>
+							<v-list-item-subtitle>{{ user.logged.id }}</v-list-item-subtitle>
+						</v-list-item-content>
+					</v-list-item>
+				</v-list>
+				<v-divider></v-divider>
+				<v-card-actions>
+					<v-spacer></v-spacer>
+					<v-btn
+						text
+						@click="menu = false"
+					>
+						Cancel
+					</v-btn>
+				</v-card-actions>
+			</v-card>
+		</v-menu>
+	</v-app-bar>
 </template>
 
 <script>
-import names from "@/plugins/name"
+
+import { mapState } from 'vuex';
 
 export default {
-    props: {},
-    mixins: {},
-    data(){
-        return {
-            random_name: "",
-        }
-    },
-    directives: {},
-    components: {},
-    computed: {},
-    watch: {},
-    methods: {
-        capFirst(string) {
-            return string.charAt(0).toUpperCase() + string.slice(1);
-        },
-        getRandomInt(min, max) {
-            return Math.floor(Math.random() * (max - min)) + min;
-        },
-        generateRandomNick() {
-            let firstname = this.capFirst(`${names.firstnames[this.getRandomInt(0, names.firstnames.length + 1)]}`);
-            let lastname = this.capFirst(`${names.lastnames[this.getRandomInt(0, names.lastnames.length + 1)]}`);
-
-            this.random_name = `${firstname} ${lastname}`
-        },
-    },
-    mounted() {
-        this.generateRandomNick();
-    }
+	props: {},
+	mixins: {},
+	data(){
+		return {
+			menu: false,
+		}
+	},
+	directives: {},
+	components: {},
+	computed: {
+		...mapState({
+			user: state => state.user,
+		}),
+		fullname() {
+			return `${this.user.logged.firstname} ${this.user.logged.lastname}`;
+		},
+		profilesrc() {
+			return `${process.env.VUE_APP_API_URI}/${this.user.logged.profilesrc}`
+		}
+	},
+	watch: {},
+	methods: {
+		async createUser() {
+			await this.$store.dispatch('user/createUser');
+		}
+	},
+	beforeMount() {
+		this.createUser();
+	}
 }
 </script>
 

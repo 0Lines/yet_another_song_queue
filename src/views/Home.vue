@@ -13,7 +13,7 @@
             </v-container>
         </v-main>
 
-        <v-footer color="primary" app>
+        <v-footer color="accent" app>
             <v-col class="text-center" cols="12">
                 Yet Another Song Queue - Under GPL-3.0 License, {{ new Date().getFullYear() }}
             </v-col>
