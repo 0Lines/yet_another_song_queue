@@ -10,6 +10,7 @@
 			bottom
 			open-on-hover
 			open-on-click
+			v-if="!loadingUser"
 		>
 			<template v-slot:activator="{ on, attrs }">
 				<v-sheet v-bind="attrs" v-on="on" color="accent">
@@ -60,6 +61,7 @@ export default {
 	data(){
 		return {
 			menu: false,
+			loadingUser: false,
 		}
 	},
 	directives: {},
@@ -78,7 +80,9 @@ export default {
 	watch: {},
 	methods: {
 		async createUser() {
+			this.loadingUser = true;
 			await this.$store.dispatch('user/createUser');
+			this.loadingUser = false;
 		}
 	},
 	beforeMount() {
