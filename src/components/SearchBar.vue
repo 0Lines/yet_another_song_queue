@@ -1,17 +1,17 @@
 <template>
-    <v-sheet class="round-container pa-2 mb-5">
+    <v-sheet class="pa-2">
         <v-text-field
-            dense
-            outlined
-            single-line
-            hide-details
+            v-model="searchString"
             label="Search"
             color="secondary"
             prepend-inner-icon="mdi-magnify"
-            v-model="searchString"
+            single-line
+            outlined
+            dense
+            hide-details
             :loading="loadingSong"
             :disabled="loadingSong"
-            @keydown.enter="validateAndAddSong">
+            @keydown.enter="searchAndQueueNewSong">
         </v-text-field>
     </v-sheet>
 </template>
@@ -31,11 +31,19 @@ export default {
     computed: {},
     watch: {},
     methods: {
-        async validateAndAddSong() {
-            this.loadingSong = true
-            await this.$store.dispatch('playlist/validateAndAddSong', { url: this.searchString })
-            this.searchString = '' 
-            this.loadingSong = false
+        async searchAndQueueNewSong() {
+			if(this.searchString != ''){
+				this.loadingSong = true
+
+				const mediaResponse = await this.$store.dispatch('playlist/getMediaInformationFromURL', this.searchString);
+				if(mediaResponse.isError)
+					console.log("Erro searching new song: " + mediaResponse.errorMessage);
+				else
+					await this.$store.dispatch('playlist/addSongToQueue', mediaResponse);
+
+				this.searchString = '' 
+				this.loadingSong = false
+			}
         },
     },
 }

@@ -1,27 +1,38 @@
+import { handleAxiosError } from "@/utils/axios"
 import Song from "@/models/Song.js"
 
 export default {
 	namespaced: true,
 	state: {
-		songs: [],
-		playingSong: {},
+		songQueue: [],
+		playingSong: new Song({}),
+	},
+	getters: {
+		songQueue(state) {
+			return state.songQueue;
+		},
+		currentPlayingSong(state) {
+			return state.playingSong;
+		}
 	},
 	mutations: {},
 	actions: {
-		async validateAndAddSong(store, param) {
-            await this._vm.axios
-            .post('/video', { url: param.url })
-            .then((response) => {
-                const video = new Song(response.data)
-                store.state.songs.push(video)
-                store.state.playingSong = video
-            })
-            .catch(() => { 
-                 console.log('insert snackbar error')
-            })
+		//TODO SEARCH IF AXIOS CALLS THAT ONLY RETURN THE DATA NEEDS TO BE IN THE STORE
+		//REMEMBER THAT THIS FUNCTION ONLY GETS YOUTUBE MEDIA INFORMATION
+		async getMediaInformationFromURL(store, mediaURL) {
+			return await this._vm.axios.post('/video', { url: mediaURL })
+				.then((response) => {
+					return new Song(response.data);
+				}).catch((error) => { 
+					return handleAxiosError(error);
+				});
 		},
-		async removeSong(store, param) {
-			store.state.songs.splice(param.index, 1)
+		async addSongToQueue(store, song) {
+			store.state.songQueue.push(song);
+			store.state.playingSong = song;
+		},
+		async removeSong(store, songIndex) {
+			store.state.songQueue.splice(songIndex, 1)
 		},
 	},
 	modules: {},

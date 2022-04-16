@@ -42,7 +42,7 @@ export default {
 	methods: {
 		removeSongFromPlayList(songIndex){
 			console.log("Removing song number " + songIndex + " from playlist.");
-			this.$store.dispatch('playlist/removeSong', {index : songIndex});
+			this.$store.dispatch('playlist/removeSong', songIndex);
 		}
 	},
 }

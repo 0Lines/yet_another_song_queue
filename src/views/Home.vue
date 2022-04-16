@@ -1,15 +1,14 @@
 <template>
     <v-card tile height="100vh">
         <AppBar />
+
         <v-main app>
             <v-container class="pa-6">
-                <SearchBar />
-				<PlayingSong 
-                    v-if="playlist.songs.length > 0" 
-                    :song="playlist.playingSong" 
-                    class="round-container my-5"
-                />
-				<PlayList :playList="playlist.songs" class="round-container"/>
+                <SearchBar class="round-container mb-5"/>
+
+				<PlayingSong v-show="songQueue.length > 0 || 1==1" class="round-container mb-5" :song="currentPlayingSong" />
+
+				<PlayList :playList="songQueue" class="round-container"/>
             </v-container>
         </v-main>
 
@@ -27,7 +26,7 @@ import PlayingSong from '@/components/PlayingSong.vue'
 import PlayList from '@/components/PlayList.vue'
 import SearchBar from '@/components/SearchBar.vue'
 
-import { mapState } from 'vuex'
+import { mapGetters } from 'vuex'
 
 export default {
     props: {},
@@ -43,8 +42,9 @@ export default {
         SearchBar,
     },
     computed: {
-        ...mapState({
-            playlist: state => state.playlist,
+        ...mapGetters({
+            currentPlayingSong: 'playlist/currentPlayingSong',
+            songQueue: 'playlist/songQueue',
         }),
     },
     watch: {},
