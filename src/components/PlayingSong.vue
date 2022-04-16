@@ -1,7 +1,7 @@
 <template>
     <v-sheet class="d-flex align-center">
 		<v-avatar class="ml-4" size="125">
-			<v-img :class="imageClass" :src="song.thumbnails[0].url" />
+			<v-img class="spin" :class="imageClass" :src="song.thumbnails[0].url" />
 		</v-avatar>
 
 		<v-card flat min-width="0" width="100%">
@@ -53,7 +53,7 @@ export default {
             return this.isPlaying ? 'mdi-pause-circle' : 'mdi-play-circle'
         },
         imageClass() {
-            return this.isPlaying ? 'spin' : ''
+            return this.isPlaying ? '' : 'paused'
         },
     },
     watch: {},
@@ -82,4 +82,7 @@ export default {
         animation-iteration-count: infinite;
         animation-timing-function: linear;
     }
+	.paused {
+		animation-play-state: paused;
+	}
 </style>
