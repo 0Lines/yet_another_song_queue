@@ -1,20 +1,25 @@
-import User from "../models/User";
+import User from "@/models/User";
 
 export default {
 	namespaced: true,
 	state: {
-		logged: {},
+		loading: false,
+		account: {},
 	},
-	mutations: {},
+	mutations: {
+		setLoading(state, value) {
+			state.loading = value;
+		}
+	},
 	actions: {
-		async createUser(store, param) {
-			await this._vm.axios
+		async getNewUser(store) {
+			return await this._vm.axios
 			.post('/create/user', {})
 			.then((response) => {
-				store.state.logged = new User(response.data);
+				return new User(response.data);
 			})
-			.catch(() => { 
-				console.log('insert snackbar error')
+			.catch((error) => { 
+				return handleAxiosError(error);
 			})
         },
 	},

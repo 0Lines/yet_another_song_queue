@@ -53,7 +53,7 @@ export default {
             return this.isPlaying ? 'mdi-pause-circle' : 'mdi-play-circle'
         },
         imageClass() {
-            return this.isPlaying ? '' : 'paused'
+            return this.isPlaying ? 'running' : 'paused'
         },
     },
     watch: {},
@@ -82,6 +82,9 @@ export default {
         animation-iteration-count: infinite;
         animation-timing-function: linear;
     }
+	.running {
+		animation-play-state: running;
+	}
 	.paused {
 		animation-play-state: paused;
 	}
