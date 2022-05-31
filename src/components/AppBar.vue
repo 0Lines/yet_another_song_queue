@@ -18,6 +18,7 @@
 			bottom
 			open-on-click
 			:close-on-content-click="false"
+			max-width="min-content"
 		>
 			<template v-slot:activator="{ on, attrs }">
 				<v-sheet v-bind="attrs" v-on="on" color="accent">

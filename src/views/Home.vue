@@ -1,14 +1,17 @@
 <template>
-    <v-card tile height="100vh">
+    <v-card tile flat min-height="100vh">
         <AppBar />
 
         <v-main app>
             <v-container class="pa-6">
                 <SearchBar class="round-container mb-5"/>
 
-				<PlayingSong v-show="songQueue.length > 0 || 1==1" class="round-container mb-5" :song="currentPlayingSong" />
+				<PlayingSong v-show="songQueue.length > 0" class="round-container mb-5" :song="currentPlayingSong" />
 
-				<PlayList :playList="songQueue" class="round-container"/>
+				<PlayList :playList="songQueue" class="round-container mb-5"/>
+
+				<v-btn @click="testeSocket">socketTest1</v-btn>
+				<v-btn @click="testeSocket2">socketTest2</v-btn>
             </v-container>
         </v-main>
 
@@ -48,7 +51,20 @@ export default {
         }),
     },
     watch: {},
-    methods: {},
+    methods: {
+		testeSocket() {
+			this.$socket.emit('eventFromClientTest1', 1);
+		},
+		testeSocket2() {
+			this.$socket.emit('eventFromClientTest2', { customVar: [1, 2, 3], customVar2: "rbc" });
+		}
+	},
+	created() {
+		//GAMBIARRA REGISTRAR SOCKET EVENT AQUI, MAS É SO DEMONSTRAÇÃO 
+		this.$socket.on('retrieveFromServer', (msg) => {
+			console.log("Received '" + JSON.stringify(msg) + "'' from server via 'retrieveFromServer' event");
+		});
+	}
 }
 </script>
 

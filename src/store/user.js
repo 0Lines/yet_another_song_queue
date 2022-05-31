@@ -1,4 +1,5 @@
 import User from "@/models/User";
+import { handleAxiosError } from "@/utils/axios";
 
 export default {
 	namespaced: true,
@@ -14,7 +15,7 @@ export default {
 	actions: {
 		async getNewUser(store) {
 			return await this._vm.axios
-			.post('/create/user', {})
+			.post('/users', {})
 			.then((response) => {
 				return new User(response.data);
 			})
