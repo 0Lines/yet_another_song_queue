@@ -3,12 +3,12 @@ import VueRouter from "vue-router";
 
 Vue.use(VueRouter);
 
-import Home from "@/views/Home.vue";
+import RoomPage from "@/views/RoomPage.vue";
 
 const routes = [
     {
         path: "/",
-        component: Home,
+        component: RoomPage,
     },
 ];
 

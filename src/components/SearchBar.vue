@@ -35,11 +35,11 @@ export default {
 			if(this.searchString != ''){
 				this.loadingSong = true
 
-				const mediaResponse = await this.$store.dispatch('playlist/getMediaInformationFromURL', this.searchString);
-				if(mediaResponse.isError)
-					console.log("Erro searching new song: " + mediaResponse.errorMessage);
+				const APIresponse = await this.$store.dispatch('room/addSongInPlaylist', this.searchString);
+				if(APIresponse.isError)
+					console.log("Erro searching new song: " + APIresponse.errorMessage);
 				else
-					await this.$store.dispatch('playlist/addSongToQueue', mediaResponse);
+					console.log("Success when requesting to add song into the room.");;
 
 				this.searchString = '' 
 				this.loadingSong = false

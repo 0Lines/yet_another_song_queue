@@ -1,7 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 
-import playlist from "./playlist";
+import room from "./room";
 import user from "./user"
 
 Vue.use(Vuex);
@@ -11,7 +11,7 @@ export default new Vuex.Store({
 	mutations: {},
 	actions: {},
 	modules: {
-		playlist,
+		room,
 		user
 	},
 });

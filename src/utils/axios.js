@@ -15,7 +15,7 @@ function handleAxiosError(error) {
 
 	} else if (error.request) {
 		// The request was made but no response was received
-		errorMessage = "There was no response...";
+		errorMessage = "There was no response";
 		errorType = axiosErrorTypes.noResponse;
 
 	} else {
