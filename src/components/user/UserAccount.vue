@@ -1,5 +1,5 @@
 <template>
-	<v-card>
+	<v-card :color="color">
 		<v-skeleton-loader v-if="loading" type="list-item-avatar-two-line" width="232"/>
 
 		<v-card-text v-else-if="errorMessage">
