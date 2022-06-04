@@ -6,12 +6,12 @@
         <v-main>
             <v-sheet width="50%" class="text-center ma-auto">
                 <v-form class="mt-10 ">
-                    <v-btn block>
+                    <v-btn block @click="createRoom">
                         Criar sala
                     </v-btn>
                     <div class="d-flex align-center mt-5"> 
-                        <v-text-field color="grey" label="Código da sala" class="mr-5"></v-text-field>
-                        <v-btn>
+                        <v-text-field v-model="roomCode" color="grey" label="Código da sala" class="mr-5"></v-text-field>
+                        <v-btn @click="enterRoom">
                             Entrar na sala
                         </v-btn>
                     </div>
@@ -33,13 +33,35 @@ export default {
     mixins: {},
     data(){
         return {
+			roomCode: "",
         }
     },
     directives: {},
     components: {},
     computed: {},
     watch: {},
-    methods: {},
+    methods: {
+		async createRoom() {
+			console.log('creating room....');
+
+			const response = await this.$store.dispatch('room/createRoom', "TOME");
+			if(response.isError) {
+				console.log(response);
+			} else {
+				console.log(response);
+			}
+		},
+		async enterRoom() {
+			console.log('entering room... ' + this.roomCode);
+
+			const response = await this.$store.dispatch('room/enterRoom', this.roomCode);
+			if(response.isError) {
+				console.log(response);
+			} else {
+				console.log(response);
+			}
+		}
+	},
 }
 </script>
 

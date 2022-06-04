@@ -28,6 +28,22 @@ export default {
 					return handleAxiosError(error);
 				});
 		},
+		async createRoom(store, name) {
+			return await this._vm.axios.post('/rooms', { name })
+				.then((response) => {
+					return response;
+				}).catch((error) => { 
+					return handleAxiosError(error);
+				});
+		},
+		async enterRoom(store, id_room) {
+			return await this._vm.axios.get('/rooms' + id_room)
+				.then((response) => {
+					return response;
+				}).catch((error) => { 
+					return handleAxiosError(error);
+				});
+		}
 	},
 	modules: {},
 };
