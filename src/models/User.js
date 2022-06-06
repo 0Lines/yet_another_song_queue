@@ -4,10 +4,10 @@ export default class User {
 	lastname = "";
 	profilesrc = "";
 
-	constructor(params) {
-		this.id = params.id;
-		this.firstname = params.firstname;
-		this.lastname = params.lastname;
-		this.profilesrc = params.profilesrc;
+	constructor({ id_user, nickname, photo_link }) {
+		this.id = id_user; //TODO OS ENVOLVIDOS QUE ENTREM EM ACORDO DESSE TBM (id_user ou id)
+		this.firstname = nickname;
+		//this.lastname = params.lastname; OS ENVOLVIDOS QUE ENTREM EM ACORDO
+		this.profilesrc = photo_link;
 	}
 }

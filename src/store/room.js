@@ -31,15 +31,15 @@ export default {
 		async createRoom(store, name) {
 			return await this._vm.axios.post('/rooms', { name })
 				.then((response) => {
-					return response;
+					return response.data;
 				}).catch((error) => { 
 					return handleAxiosError(error);
 				});
 		},
-		async enterRoom(store, id_room) {
-			return await this._vm.axios.get('/rooms' + id_room)
+		async enterRoom(store, { id_room, id_user }) {
+			return await this._vm.axios.post('/enterRoom', { id_room, id_user })
 				.then((response) => {
-					return response;
+					return response.data;
 				}).catch((error) => { 
 					return handleAxiosError(error);
 				});

@@ -57,9 +57,7 @@ export default {
     },
     directives: {},
     components: { 
-        UserAccountPreview,
-        UserAccount,
-        Room
+        UserAccountPreview, UserAccount, Room
     },
     computed: {
 		user: {
@@ -88,24 +86,8 @@ export default {
 		}
 	},
     watch: {},
-    methods: {
-		async createUser() {
-			this.loadingUser = true;
-			const response = await this.$store.dispatch('user/getNewUser');
-			if(response.isError) {
-				console.log(response.errorMessage);
-				this.user.account = response;
-			} else {
-				this.user.account = response;
-			}
-
-			this.loadingUser = false;
-		}
-	},
-	created() {
-		//TODO CREATE USER SHOULD BE AFTER USER ENTERED ROOM, NOT ON THIS CREATED
-		this.createUser();
-	}
+    methods: {},
+	created() {}
 }
 </script>
 
