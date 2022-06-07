@@ -7,10 +7,12 @@ const axiosErrorTypes = {
 function handleAxiosError(error) {
 	let errorMessage = "";
 	let errorType = 0;
+	let errorStatus = 0;
 
 	if (error.response) {
 		// Request made and server responded
-		errorMessage = "Server responded with " + error.response.status;
+		errorStatus = error.response.status;
+		errorMessage = error.response.statusText;
 		errorType = axiosErrorTypes.hadResponse;
 
 	} else if (error.request) {
@@ -24,7 +26,7 @@ function handleAxiosError(error) {
 		errorType = axiosErrorTypes.other;
 	}
 
-	return { isError: true, errorType, errorMessage }
+	return { isError: true, errorType, errorStatus: errorStatus, errorMessage }
 }
 
 module.exports = { axiosErrorTypes, handleAxiosError }
