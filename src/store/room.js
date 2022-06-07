@@ -37,7 +37,7 @@ export default {
 				});
 		},
 		async enterRoom(store, { id_room, id_user }) {
-			return await this._vm.axios.post('/enterRoom', { id_room, id_user })
+			return await this._vm.axios.put('/enter-room', { id_room, id_user })
 				.then((response) => {
 					return response.data;
 				}).catch((error) => { 
