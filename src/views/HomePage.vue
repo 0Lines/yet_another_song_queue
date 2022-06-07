@@ -43,33 +43,15 @@ export default {
     watch: {},
     methods: {
 		async createRoomBtn() {
-			const user = this.$store.getters['user/userAccount'];
-
-			const userAssigned = user.id ? user : await this.$store.dispatch('user/createAndAssignNewUser');
-			if(userAssigned.isError)
-				return false;
-
 			const createRoomResponse = await this.$store.dispatch('room/createRoom', "TOME");
-			if(createRoomResponse.isError) {
-				console.log("Error when creating room: " + createRoomResponse);
+			if(createRoomResponse.isError)
 				return false;
-			}
 
-			const enterRoomResponse = await this.$store.dispatch('room/enterRoom', {
-				id_room: createRoomResponse.id_room,
-				id_user: userAssigned.id
-			});
-
-			if(enterRoomResponse.isError) {
-				console.log("Error when entering room: " + response);
-				return false;
-			}
-
-			console.log("Ented room: " + enterRoomResponse);
-			console.log(enterRoomResponse);
+			this.$router.push({ name: 'room', params: { id_room: createRoomResponse.id_room } });
 		},
-		async enterRoomBtn(roomCode) {
-		}
+		async enterRoomBtn(id_room) {
+			this.$router.push({ name: 'room', params: { id_room } });
+		},
 	},
 }
 </script>

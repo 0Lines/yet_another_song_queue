@@ -7,16 +7,22 @@ import RoomPage from "@/views/RoomPage.vue";
 import HomePage from "@/views/HomePage.vue";
 
 const routes = [
-    {
+	{
+		name: "home",
         path: "/",
-        component: RoomPage,
+        component: HomePage
     },
     {
-        path: "/home",
-        component: HomePage
+		name: "room",
+        path: "/room/:id_room",
+        component: RoomPage,
+		props: true
     },
 ];
 
-const router = new VueRouter({ routes });
+const router = new VueRouter({
+	routes,
+	mode: 'history',
+});
 
 export default router;

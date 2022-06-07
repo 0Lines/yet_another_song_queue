@@ -31,7 +31,9 @@
 
         <v-main app>
             <v-container class="pa-6">
-                <Room />
+				<v-progress-circular v-if="loading" indeterminate/>
+				<ApiError v-else-if="pageError != null" :errorCode="pageError.errorStatus" :errorMessage="pageError.errorMessage"/>
+                <Room v-else/>
             </v-container>
         </v-main>
 
@@ -47,17 +49,22 @@
 import Room from '@/components/Room.vue'
 import UserAccountPreview from '@/components/user/UserAccountPreview.vue'
 import UserAccount from '@/components/user/UserAccount.vue'
+import ApiError from '@/components/ApiError.vue'
 
 export default {
-    props: {},
+    props: {
+		id_room: String
+	},
     mixins: {},
     data() {
         return {
+			loading: false,
+			pageError: null,
 		}
     },
     directives: {},
     components: { 
-        UserAccountPreview, UserAccount, Room
+        UserAccountPreview, UserAccount, Room, ApiError
     },
     computed: {
 		user: {
@@ -82,12 +89,41 @@ export default {
 		userAvatarSrc() {
 			if(!this.user.account.profilesrc)
 				return null;
-			return `${process.env.VUE_APP_API_URI}/${this.user.account.profilesrc}`
+			return `${process.env.VUE_APP_API_URI}${this.user.account.profilesrc}`
 		}
 	},
-    watch: {},
-    methods: {},
-	created() {}
+	watch: {},
+	methods: {
+		async getCurrentUserOrCreateOne() {
+			const user = this.$store.getters['user/userAccount'];
+			if(user.id)
+				return user
+			
+			return await this.$store.dispatch('user/createAndAssignNewUser');
+		},
+		async initialize() {
+			this.loading = true;
+
+			const currentUser = await this.getCurrentUserOrCreateOne();
+			if(currentUser.isError) {
+				this.pageError = currentUser;
+			} else {
+				const enterRoomResponse = await this.$store.dispatch('room/enterRoom', { id_room: this.id_room, id_user: currentUser.id });
+				if(enterRoomResponse.isError) 
+					this.pageError = enterRoomResponse;
+			}
+
+			this.loading = false;
+		}
+	},
+	created() {
+		if(!this.id_room) {
+			this.$router.push({ name: 'home' });
+			return false;
+		}
+
+		this.initialize();
+	}
 }
 </script>
 
