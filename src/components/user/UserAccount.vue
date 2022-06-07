@@ -9,7 +9,7 @@
 		<v-list v-else :color="color">
 			<v-list-item>
 				<v-list-item-avatar>
-					<img v-if="userAvatarSrc" :src="avatarSrc">
+					<img v-if="userAvatarSrc" :src="userAvatarSrc">
 					<v-icon v-else color="secondary" large dark>mdi-account-circle</v-icon>
 				</v-list-item-avatar>
 
