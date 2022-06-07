@@ -4,19 +4,21 @@
             <v-toolbar-title>Yet Another Song Queue</v-toolbar-title>
         </v-app-bar>
 
-        <v-main>
-            <v-sheet width="50%" class="text-center ma-auto">
-
-                <v-form class="mt-10 ">
-                    <v-btn block @click="createRoomBtn">Criar sala</v-btn>
-
-                    <div class="d-flex align-center mt-5"> 
-                        <v-text-field v-model="roomCode" color="grey" label="Código da sala" class="mr-5"></v-text-field>
-                        <v-btn @click="enterRoomBtn(roomCode)">Entrar na sala</v-btn>
-                    </div>
-                </v-form>
-
-            </v-sheet>
+        <v-main style="height: 100%;">
+			<div class="d-flex flex-column justify-center" style="height: 100%;">
+				<v-container class="pa-6">
+	
+					<v-form ref="form" v-model="formIsValid" lazy-validation>
+						<v-btn class="mb-5" block @click="createRoomBtn">Criar sala</v-btn>
+	
+						<div class="d-flex align-center"> 
+							<v-text-field v-model="roomCode" color="grey" label="Código da sala" class="mr-5" :rules="roomCodeRules"/>
+							<v-btn @click="enterRoomBtn">Entrar na sala</v-btn>
+						</div>
+					</v-form>
+	
+				</v-container>
+			</div>
         </v-main>
 
         <v-footer color="accent" app>
@@ -35,6 +37,11 @@ export default {
     data(){
         return {
 			roomCode: "",
+			formIsValid: true,
+
+			roomCodeRules: [
+				v => !!v || 'Código é obrigatório'
+			],
         }
     },
     directives: {},
@@ -49,11 +56,11 @@ export default {
 
 			this.$router.push({ name: 'room', params: { id_room: createRoomResponse.id_room } });
 		},
-		async enterRoomBtn(id_room) {
-			if(!id_room)
+		async enterRoomBtn() {
+			if(!this.$refs.form.validate())
 				return false;
 				
-			this.$router.push({ name: 'room', params: { id_room } });
+			this.$router.push({ name: 'room', params: { id_room: this.roomCode } });
 		},
 	},
 }
