@@ -18,6 +18,10 @@ const routes = [
         component: RoomPage,
 		props: true
     },
+    {
+        path: "*",
+        redirect: to => { return '/'; }
+    },
 ];
 
 const router = new VueRouter({

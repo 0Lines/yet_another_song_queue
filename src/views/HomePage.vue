@@ -50,6 +50,9 @@ export default {
 			this.$router.push({ name: 'room', params: { id_room: createRoomResponse.id_room } });
 		},
 		async enterRoomBtn(id_room) {
+			if(!id_room)
+				return false;
+				
 			this.$router.push({ name: 'room', params: { id_room } });
 		},
 	},
