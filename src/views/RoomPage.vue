@@ -35,7 +35,7 @@
 				<v-progress-circular v-if="loading" class="ma-auto" indeterminate/>
 
 				<ApiError v-else-if="pageError != null" :errorCode="pageError.errorStatus" :errorMessage="pageError.errorMessage"/>
-				
+
                 <Room v-else/>
 
             </v-container>
@@ -72,10 +72,10 @@ export default {
 		},
 		loadingUser: {
 			get () {
-				return this.user.loading;
+				return this.user.loadingUserAccount;
 			},
 			set (value) {
-				this.$store.commit('user/setLoading', value)
+				this.$store.commit('user/setLoadingUserAccount', value)
 			}
 		},
 		userId() {

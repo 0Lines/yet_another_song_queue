@@ -2,9 +2,19 @@
 	<v-card flat rounded="pill" color="accent" @click="$emit('click')">
 		<v-badge :value="isError" color="error" content="!" overlap bottom offset-x="20" offset-y="20">
 			<v-avatar>
+
 				<v-skeleton-loader v-if="loading" type="avatar"/>
-				<img v-else-if="userAvatarSrc" :src="userAvatarSrc">
+
+				<v-img v-else-if="userAvatarSrc" :src="userAvatarSrc">
+					<template v-slot:placeholder>
+						<v-row class="fill-height ma-0" align="center" justify="center">
+							<v-progress-circular indeterminate />
+						</v-row>
+					</template>
+				</v-img>
+
 				<v-icon v-else color="secondary" large dark>mdi-account-circle</v-icon>
+				
 			</v-avatar>
 		</v-badge>
 	</v-card>
