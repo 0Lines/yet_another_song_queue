@@ -8,6 +8,7 @@
 
 		<v-btn @click="testeSocket">socketTest1</v-btn>
 		<v-btn @click="testeSocket2">socketTest2</v-btn>
+		<v-btn @click="copyRoomUrl">Compartilhar sala</v-btn>
     </v-sheet>
 </template>
 
@@ -43,6 +44,9 @@ export default {
 		},
 		testeSocket2() {
 			this.$socket.emit('eventFromClientTest2', { customVar: [1, 2, 3], customVar2: "rbc" });
+		},
+		copyRoomUrl() {
+			navigator.clipboard.writeText(window.location.href);
 		}
 	},
 	created() {
