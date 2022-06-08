@@ -30,18 +30,16 @@
 		</v-app-bar>
 
         <v-main style="height: 100%;">
-			<v-container class="d-flex flex-column justify-center pa-6" style="height: 100%;">
+			<v-container class="d-flex flex-column pa-6" style="height: 100%;">
+
 				<v-progress-circular v-if="loading" class="ma-auto" indeterminate/>
+
 				<ApiError v-else-if="pageError != null" :errorCode="pageError.errorStatus" :errorMessage="pageError.errorMessage"/>
+				
                 <Room v-else/>
+
             </v-container>
         </v-main>
-
-        <v-footer color="accent" app>
-            <v-col class="text-center" cols="12">
-                Yet Another Song Queue - Under GPL-3.0 License, {{ new Date().getFullYear() }}
-            </v-col>
-        </v-footer>
     </v-card>
 </template>
 

@@ -5,9 +5,9 @@
         </v-app-bar>
 
         <v-main style="height: 100%;">
-			<v-container class="d-flex flex-column justify-center pa-6" style="height: 100%;">
+			<v-container class="d-flex flex-column pa-6" style="height: 100%;">
 
-				<v-form ref="form" v-model="formIsValid" lazy-validation>
+				<v-form ref="form" v-model="formIsValid" class="my-auto" lazy-validation>
 					<v-btn class="mb-5" block @click="createRoomBtn">Criar sala</v-btn>
 
 					<div class="d-flex align-center"> 
@@ -18,12 +18,6 @@
 				
 			</v-container>
         </v-main>
-
-        <v-footer color="accent" app>
-            <v-col class="text-center" cols="12">
-                Yet Another Song Queue - Under GPL-3.0 License, {{ new Date().getFullYear() }}
-            </v-col>
-        </v-footer>
     </v-card>
 </template>
 
