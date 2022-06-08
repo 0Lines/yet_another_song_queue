@@ -5,20 +5,18 @@
         </v-app-bar>
 
         <v-main style="height: 100%;">
-			<div class="d-flex flex-column justify-center" style="height: 100%;">
-				<v-container class="pa-6">
-	
-					<v-form ref="form" v-model="formIsValid" lazy-validation>
-						<v-btn class="mb-5" block @click="createRoomBtn">Criar sala</v-btn>
-	
-						<div class="d-flex align-center"> 
-							<v-text-field v-model="roomCode" color="grey" label="Código da sala" class="mr-5" :rules="roomCodeRules"/>
-							<v-btn @click="enterRoomBtn">Entrar na sala</v-btn>
-						</div>
-					</v-form>
-	
-				</v-container>
-			</div>
+			<v-container class="d-flex flex-column justify-center pa-6" style="height: 100%;">
+
+				<v-form ref="form" v-model="formIsValid" lazy-validation>
+					<v-btn class="mb-5" block @click="createRoomBtn">Criar sala</v-btn>
+
+					<div class="d-flex align-center"> 
+						<v-text-field v-model="roomCode" color="grey" label="Código da sala" class="mr-5" :rules="roomCodeRules"/>
+						<v-btn @click="enterRoomBtn">Entrar na sala</v-btn>
+					</div>
+				</v-form>
+				
+			</v-container>
         </v-main>
 
         <v-footer color="accent" app>
@@ -50,7 +48,7 @@ export default {
     watch: {},
     methods: {
 		async createRoomBtn() {
-			const createRoomResponse = await this.$store.dispatch('room/createRoom', "TOME");
+			const createRoomResponse = await this.$store.dispatch('room/createRoom', "TOME"); //TODO NOME DA SALA CHUMBADO
 			if(createRoomResponse.isError)
 				return false;
 

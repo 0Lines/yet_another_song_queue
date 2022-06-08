@@ -29,9 +29,9 @@
 			</v-menu>
 		</v-app-bar>
 
-        <v-main app>
-            <v-container class="pa-6">
-				<v-progress-circular v-if="loading" indeterminate/>
+        <v-main style="height: 100%;">
+			<v-container class="d-flex flex-column justify-center pa-6" style="height: 100%;">
+				<v-progress-circular v-if="loading" class="ma-auto" indeterminate/>
 				<ApiError v-else-if="pageError != null" :errorCode="pageError.errorStatus" :errorMessage="pageError.errorMessage"/>
                 <Room v-else/>
             </v-container>
