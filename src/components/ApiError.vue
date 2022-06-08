@@ -9,7 +9,7 @@
 		</div>
 
 		<div class="text-center font-italic grey--text mb-8" style="margin-top: -30px">
-			❝ {{errorMessage}} ❞
+			❝ {{errorStatusMessage}}: {{errorMessage}} ❞
 		</div>
 
 		<div class="text-center">
@@ -21,7 +21,8 @@
 <script>
 export default {
 	props: {
-		errorCode: Number,
+		errorStatusCode: Number,
+		errorStatusMessage: String,
 		errorMessage: String,
 
 	},
@@ -34,7 +35,7 @@ export default {
     computed: {
 		errorCodeSplited: {
 			get() {
-				return this.errorCode.toString().split("");
+				return this.errorStatusCode.toString().split("");
 			}
 		}
 	},

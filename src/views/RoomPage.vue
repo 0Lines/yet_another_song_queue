@@ -34,7 +34,12 @@
 
 				<v-progress-circular v-if="loading" class="ma-auto" indeterminate/>
 
-				<ApiError v-else-if="pageError != null" :errorCode="pageError.errorStatus" :errorMessage="pageError.errorMessage"/>
+				<ApiError
+					v-else-if="pageError != null"
+					:errorStatusCode="pageError.errorStatus"
+					:errorStatusMessage="pageError.statusMessage"
+					:errorMessage="pageError.errorMessage"
+				/>
 
                 <Room v-else/>
 

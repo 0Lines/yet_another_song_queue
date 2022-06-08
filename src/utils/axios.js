@@ -8,11 +8,13 @@ function handleAxiosError(error) {
 	let errorMessage = "";
 	let errorType = 0;
 	let errorStatus = 0;
+	let statusMessage = "";
 
 	if (error.response) {
 		// Request made and server responded
 		errorStatus = error.response.status;
-		errorMessage = error.response.statusText;
+		statusMessage = error.response.statusText;
+		errorMessage = error.response.data;
 		errorType = axiosErrorTypes.hadResponse;
 
 	} else if (error.request) {
@@ -26,7 +28,7 @@ function handleAxiosError(error) {
 		errorType = axiosErrorTypes.other;
 	}
 
-	return { isError: true, errorType, errorStatus: errorStatus, errorMessage }
+	return { isError: true, errorType, errorStatus, statusMessage, errorMessage }
 }
 
 module.exports = { axiosErrorTypes, handleAxiosError }

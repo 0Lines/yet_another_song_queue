@@ -31,6 +31,7 @@ export default {
 			})
         },
 		async createAndAssignNewUser(store) {
+			store.commit('setUserAccount', {});
 			store.commit('setLoadingUserAccount', true);
 
 			const createNewUserResponse = await store.dispatch('getNewUser');
