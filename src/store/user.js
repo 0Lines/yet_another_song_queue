@@ -5,7 +5,7 @@ export default {
 	namespaced: true,
 	state: {
 		loadingUserAccount: false,
-		account: {},
+		account: new User({}),
 	},
 	getters: {
 		userAccount(state) {
