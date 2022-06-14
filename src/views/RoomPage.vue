@@ -1,31 +1,45 @@
 <template>
     <v-card tile flat min-height="100vh">
 
-        <v-app-bar color="accent" flat app>
-			<v-toolbar-title>Yet Another Song Queue</v-toolbar-title>
+		<v-app-bar color="accent" flat app>
+			<v-menu offset-y :close-on-content-click="false" max-width="min-content">
+				<template v-slot:activator="{ on, attrs }">
+					<v-toolbar-title v-bind="attrs" v-on="on">ROOM NAME</v-toolbar-title>
+				</template>
+
+				<v-card color="accent">
+					<UserAccount
+						:loading="loadingUser"
+						:errorMessage="user.account.errorMessage"
+						:users="room.participants"
+						style="min-width: 220px;"
+					/>
+				</v-card>
+			</v-menu>
 
 			<v-spacer></v-spacer>
 			<v-menu offset-y :close-on-content-click="false" max-width="min-content">
 				<template v-slot:activator="{ on, attrs }">
-					<div v-bind="attrs" v-on="on"> <!-- DIV TO HANDLE ACTIVATOR EVENTS (obs: if u know how to remove this and make the custom component handle it pls do it) -->
-						<UserAccountPreview
+					<div v-bind="attrs" v-on="on"> <!-- TODO DIV TO HANDLE ACTIVATOR EVENTS (obs: if u know how to remove this and make the custom component handle it pls do it) -->
+						<UserAvatar
 							:loading="loadingUser"
 							:isError="user.account.isError"
-							:userName="userName"
+							:userName="user.account.nickname"
 							:userAvatarSrc="userAvatarSrc"
 						/>
 					</div>
 				</template>
 
-				<UserAccount
-					color="accent"
-					:loading="loadingUser"
-					:errorMessage="user.account.errorMessage"
-					:userId="userId"
-					:userName="userName"
-					:userAvatarSrc="userAvatarSrc"
-					style="min-width: 220px;"
-				/>
+				<v-sheet color="accent">
+					<UserListItem
+						:loading="loadingUser"
+						:errorMessage="user.account.errorMessage"
+						:userId="user.account.id"
+						:userName="user.account.nickname"
+						:userAvatarSrc="userAvatarSrc"
+						style="min-width: 220px;"
+					/>
+				</v-sheet>
 			</v-menu>
 		</v-app-bar>
 
@@ -50,9 +64,10 @@
 
 <script>
 import Room from '@/components/Room.vue'
-import UserAccountPreview from '@/components/user/UserAccountPreview.vue'
+import UserAvatar from '@/components/user/UserAvatar.vue'
 import UserAccount from '@/components/user/UserAccount.vue'
 import ApiError from '@/components/ApiError.vue'
+import UserListItem from '@/components/user/UserListItem.vue'
 
 export default {
     props: {
@@ -67,9 +82,14 @@ export default {
     },
     directives: {},
     components: { 
-        UserAccountPreview, UserAccount, Room, ApiError
+        UserAvatar, UserListItem, UserAccount, Room, ApiError
     },
     computed: {
+		room: {
+			get() {
+				return this.$store.state.room;
+			}
+		},
 		user: {
 			get() {
 				return this.$store.state.user;
@@ -82,12 +102,6 @@ export default {
 			set (value) {
 				this.$store.commit('user/setLoadingUserAccount', value)
 			}
-		},
-		userId() {
-			return this.user.account.id;
-		},
-		userName() {
-			return `${this.user.account.firstname} ${this.user.account.lastname}`;
 		},
 		userAvatarSrc() {
 			if(!this.user.account.profilesrc)

@@ -1,5 +1,5 @@
 <template>
-	<v-card flat rounded="pill" color="accent" @click="$emit('click')">
+	<v-card flat rounded="pill" color="accent" @click="$emit('click')"> <!-- TODO MAYBE REMOVE THIS -->
 		<v-badge :value="isError" color="error" content="!" overlap bottom offset-x="20" offset-y="20">
 			<v-avatar>
 
@@ -13,7 +13,7 @@
 					</template>
 				</v-img>
 
-				<v-icon v-else color="secondary" large dark>mdi-account-circle</v-icon>
+				<v-icon v-else color="secondary" large dark>mdi-account-circle</v-icon> <!-- TODO MAYBE REMOVE THIS AND USE A STD IMG -->
 				
 			</v-avatar>
 		</v-badge>
