@@ -1,5 +1,5 @@
 <template>
-	<v-card flat rounded="pill" color="accent" @click="$emit('click')"> <!-- TODO MAYBE REMOVE THIS -->
+	<v-card flat rounded="pill" :color="color" @click="$emit('click')"> <!-- TODO MAYBE REMOVE THIS -->
 		<v-badge :value="isError" color="error" content="!" overlap bottom offset-x="20" offset-y="20">
 			<v-avatar>
 
@@ -23,6 +23,7 @@
 <script>
 export default {
 	props: {
+		color: 			{ type: String },
 		loading: 		{ type: Boolean, default: false },
 		isError: 		{ type: Boolean, default: false },
 		userAvatarSrc:	{ type: String },

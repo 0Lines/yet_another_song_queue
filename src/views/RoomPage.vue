@@ -7,14 +7,13 @@
 					<v-toolbar-title v-bind="attrs" v-on="on">ROOM NAME</v-toolbar-title>
 				</template>
 
-				<v-card color="accent">
-					<UserAccount
-						:loading="loadingUser"
-						:errorMessage="user.account.errorMessage"
-						:users="room.participants"
-						style="min-width: 220px;"
-					/>
-				</v-card>
+				<UserList
+					color="accent"
+					:loading="loadingUser"
+					:errorMessage="user.account.errorMessage"
+					:users="room.participants"
+					style="min-width: 220px;"
+				/>
 			</v-menu>
 
 			<v-spacer></v-spacer>
@@ -22,6 +21,7 @@
 				<template v-slot:activator="{ on, attrs }">
 					<div v-bind="attrs" v-on="on"> <!-- TODO DIV TO HANDLE ACTIVATOR EVENTS (obs: if u know how to remove this and make the custom component handle it pls do it) -->
 						<UserAvatar
+							color="accent"
 							:loading="loadingUser"
 							:isError="user.account.isError"
 							:userName="user.account.nickname"
@@ -65,7 +65,7 @@
 <script>
 import Room from '@/components/Room.vue'
 import UserAvatar from '@/components/user/UserAvatar.vue'
-import UserAccount from '@/components/user/UserAccount.vue'
+import UserList from '@/components/user/UserList.vue'
 import ApiError from '@/components/ApiError.vue'
 import UserListItem from '@/components/user/UserListItem.vue'
 
@@ -82,7 +82,7 @@ export default {
     },
     directives: {},
     components: { 
-        UserAvatar, UserListItem, UserAccount, Room, ApiError
+        UserAvatar, UserListItem, UserList, Room, ApiError
     },
     computed: {
 		room: {
