@@ -5,17 +5,31 @@
         </v-app-bar>
 
         <v-main style="height: 100%;">
-			<v-container class="d-flex flex-column pa-6" style="height: 100%;">
-
-				<v-form ref="form" v-model="formIsValid" class="my-auto" lazy-validation>
-					<v-btn class="mb-5" block @click="createRoomBtn">Criar sala</v-btn>
-
+            <!--TODO - Center the contents and add the logo -->
+			<v-container class="d-flex flex-column pa-6" style="max-width: 900px; height: 100%;">
+				<v-form ref="formRoomName" v-model="formIsValid" lazy-validation>
 					<div class="d-flex align-center"> 
-						<v-text-field v-model="roomCode" color="grey" label="Código da sala" class="mr-5" :rules="roomCodeRules"/>
-						<v-btn @click="enterRoomBtn">Entrar na sala</v-btn>
-					</div>
+                        <v-col>
+                            <h2>🥳 Create my own party</h2>
+                            <v-row class="my-2">
+                                <v-text-field v-model="roomName" color="grey" label="Name" class="mr-5" :rules="roomNameRules"/>
+                                <v-btn x-large width="200" class="font-weight-bold" @click="createRoom">Create Room</v-btn>
+                            </v-row>
+                        </v-col>
+                    </div>
 				</v-form>
-				
+
+				<v-form ref="formRoomCode" v-model="formIsValid" lazy-validation>
+					<div class="d-flex align-center"> 
+                        <v-col>
+                            <h2>😎 Join my friends</h2>
+                            <v-row class="my-2">
+                                <v-text-field v-model="roomCode" color="grey" label="Code" class="mr-5" :rules="roomCodeRules"/>
+                                <v-btn x-large width="200" class="font-weight-bold" @click="enterRoom">Enter Room</v-btn>
+                            </v-row>
+                        </v-col>
+					</div>
+                </v-form>
 			</v-container>
         </v-main>
     </v-card>
@@ -26,13 +40,17 @@
 export default {
     props: {},
     mixins: {},
-    data(){
+    data() {
         return {
+			roomName: "",
 			roomCode: "",
 			formIsValid: true,
 
 			roomCodeRules: [
-				v => !!v || 'Código é obrigatório'
+				v => !!v || 'Code is required'
+			],
+			roomNameRules: [
+				v => !!v || 'Name is required'
 			],
         }
     },
@@ -41,15 +59,18 @@ export default {
     computed: {},
     watch: {},
     methods: {
-		async createRoomBtn() {
-			const createRoomResponse = await this.$store.dispatch('room/createRoom', "TOME"); //TODO NOME DA SALA CHUMBADO
+		async createRoom() {
+			if(!this.$refs.formRoomName.validate())
+				return false;
+
+			const createRoomResponse = await this.$store.dispatch('room/createRoom', this.roomName); //TODO NOME DA SALA CHUMBADO
 			if(createRoomResponse.isError)
 				return false;
 
 			this.$router.push({ name: 'room', params: { id_room: createRoomResponse.id_room } });
 		},
-		async enterRoomBtn() {
-			if(!this.$refs.form.validate())
+		async enterRoom() {
+			if(!this.$refs.formRoomCode.validate())
 				return false;
 				
 			this.$router.push({ name: 'room', params: { id_room: this.roomCode } });
