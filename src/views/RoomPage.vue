@@ -4,7 +4,7 @@
 		<v-app-bar color="accent" flat dense app>
 			<v-menu offset-y :close-on-content-click="false" max-width="min-content">
 				<template v-slot:activator="{ on, attrs }">
-					<v-toolbar-title v-bind="attrs" v-on="on">ROOM NAME</v-toolbar-title>
+					<v-toolbar-title v-bind="attrs" v-on="on">{{ room.room.name }}</v-toolbar-title>
 				</template>
 
 				<UserList
@@ -16,7 +16,7 @@
 				/>
 			</v-menu>
 
-			<v-spacer></v-spacer>
+			<v-spacer />
 			<v-menu offset-y :close-on-content-click="false" max-width="min-content">
 				<template v-slot:activator="{ on, attrs }">
 					<div v-bind="attrs" v-on="on"> <!-- TODO DIV TO HANDLE ACTIVATOR EVENTS (obs: if u know how to remove this and make the custom component handle it pls do it) -->
@@ -44,12 +44,12 @@
 		</v-app-bar>
 
         <v-main style="height: 100%;">
-			<v-container class="d-flex flex-column pa-6" style="height: 100%;">
+			<v-container class="d-flex flex-column pa-6" style="max-width: 1000px; height: 100%;">
 
 				<v-progress-circular v-if="loading" class="ma-auto" indeterminate/>
 
 				<ApiError
-					v-else-if="pageError != null"
+					v-else-if="pageError"
 					:errorStatusCode="pageError.errorStatus"
 					:errorStatusMessage="pageError.statusMessage"
 					:errorMessage="pageError.errorMessage"
@@ -139,9 +139,19 @@ export default {
 			return false;
 		}
 
-		//GAMBIARRA REGISTRAR SOCKET EVENT AQUI, MAS É SO DEMONSTRAÇÃO 
+		//TODO - Find a better place to register the socket
 		this.$socket.on('retrieveFromServer', (msg) => {
 			console.log("Received '" + JSON.stringify(msg) + "'' from server via 'retrieveFromServer' event");
+		});
+
+		this.$socket.on('refreshUsers', () => {
+            console.log("RECEIVED: Refresh Users - Id Room: ", this.id_room);
+	        this.$store.dispatch('room/getRoomParticipants', this.id_room);
+		});
+
+		this.$socket.on('refreshPlaylist', () => {
+            console.log("RECEIVED: Refresh Playlist - Id Room: ", this.id_room);
+	        this.$store.dispatch('room/getPlaylist', this.id_room);
 		});
 
 		this.initialize();

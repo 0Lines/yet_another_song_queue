@@ -1,16 +1,16 @@
 <template>
     <v-sheet class="d-flex align-center">
 		<v-avatar class="ml-4" size="125">
-			<v-img class="spin" :class="imageClass" :src="song.thumbnails[0].url" />
+			<v-img class="spin" :class="imageClass" :src="song.thumbnail_link" />
 		</v-avatar>
 
 		<v-card flat min-width="0" width="100%">
 			<v-card-title class="d-block text-truncate">
-				<v-icon class="mr-2" color="secondary"> mdi-music </v-icon>{{ song.title }}
+				<v-icon class="mr-2" color="secondary"> mdi-music </v-icon>{{ song.name }}
 			</v-card-title>
 			
 			<v-card-subtitle class="d-block text-truncate">
-				<v-icon class="mr-2" color="secondary"> mdi-account-music </v-icon>{{ song.ownerChannelName }}
+				<v-icon class="mr-2" color="secondary"> mdi-account-music </v-icon>{{ song.artist }}
 			</v-card-subtitle>
 
 			<v-card-actions class="justify-center">

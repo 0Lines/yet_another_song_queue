@@ -2,13 +2,11 @@
     <v-sheet>
 		<SearchBar class="round-container mb-5"/>
 
-		<PlayingSong v-show="songQueue.length > 0" class="round-container mb-5" :song="currentPlayingSong" />
+		<PlayingSong v-if="playlist.length > 0" class="round-container mb-5" :song="currentPlayingSong" />
 
-		<PlayList :playList="songQueue" class="round-container mb-5"/>
+		<PlayList :playlist="playlist" class="round-container mb-5"/>
 
-		<v-btn @click="testeSocket">socketTest1</v-btn>
-		<v-btn @click="testeSocket2">socketTest2</v-btn>
-		<v-btn @click="copyRoomUrl">Compartilhar sala</v-btn>
+		<v-btn @click="copyRoomUrl">Share Room</v-btn>
     </v-sheet>
 </template>
 
@@ -34,7 +32,7 @@ export default {
     computed: {
         ...mapGetters({
             currentPlayingSong: 'room/currentPlayingSong',
-            songQueue: 'room/songQueue',
+            playlist: 'room/playlist',
         }),
     },
     watch: {},

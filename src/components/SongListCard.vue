@@ -1,13 +1,13 @@
 <template>
     <v-list-item>
         <v-list-item-avatar>
-            <v-icon class="secondary">mdi-music</v-icon>
+			<v-img :src="song.thumbnail_link" />
         </v-list-item-avatar>
 
         <v-list-item-content>
-            <v-list-item-title>{{ song.title }}</v-list-item-title>
+            <v-list-item-title>{{ song.name }}</v-list-item-title>
 
-            <v-list-item-subtitle>{{ song.ownerChannelName }}</v-list-item-subtitle>
+            <v-list-item-subtitle>{{ song.artist }}</v-list-item-subtitle>
         </v-list-item-content>
 
         <v-list-item-action>
@@ -19,7 +19,6 @@
 </template>
 
 <script>
-
 import Song from "@/models/Song.js"
 
 export default {
