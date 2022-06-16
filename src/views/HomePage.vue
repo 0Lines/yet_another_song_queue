@@ -1,6 +1,6 @@
 <template>
     <v-card tile flat min-height="100vh">
-        <v-app-bar color="accent" flat app>
+        <v-app-bar color="accent" flat dense app>
             <v-toolbar-title>Yet Another Song Queue</v-toolbar-title>
         </v-app-bar>
 

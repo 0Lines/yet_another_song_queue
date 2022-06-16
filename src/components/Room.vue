@@ -48,12 +48,6 @@ export default {
 		copyRoomUrl() {
 			navigator.clipboard.writeText(window.location.href);
 		}
-	},
-	created() {
-		//GAMBIARRA REGISTRAR SOCKET EVENT AQUI, MAS É SO DEMONSTRAÇÃO 
-		this.$socket.on('retrieveFromServer', (msg) => {
-			console.log("Received '" + JSON.stringify(msg) + "'' from server via 'retrieveFromServer' event");
-		});
 	}
 }
 </script>

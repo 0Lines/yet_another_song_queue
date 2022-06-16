@@ -1,7 +1,7 @@
 <template>
     <v-card tile flat min-height="100vh">
 
-		<v-app-bar color="accent" flat app>
+		<v-app-bar color="accent" flat dense app>
 			<v-menu offset-y :close-on-content-click="false" max-width="min-content">
 				<template v-slot:activator="{ on, attrs }">
 					<v-toolbar-title v-bind="attrs" v-on="on">ROOM NAME</v-toolbar-title>
@@ -138,6 +138,11 @@ export default {
 			this.$router.push({ name: 'home' });
 			return false;
 		}
+
+		//GAMBIARRA REGISTRAR SOCKET EVENT AQUI, MAS É SO DEMONSTRAÇÃO 
+		this.$socket.on('retrieveFromServer', (msg) => {
+			console.log("Received '" + JSON.stringify(msg) + "'' from server via 'retrieveFromServer' event");
+		});
 
 		this.initialize();
 	}
