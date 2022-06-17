@@ -139,11 +139,6 @@ export default {
 			return false;
 		}
 
-		//TODO - Find a better place to register the socket
-		this.$socket.on('retrieveFromServer', (msg) => {
-			console.log("Received '" + JSON.stringify(msg) + "'' from server via 'retrieveFromServer' event");
-		});
-
 		this.$socket.on('refreshUsers', () => {
             console.log("RECEIVED: Refresh Users - Id Room: ", this.id_room);
 	        this.$store.dispatch('room/getRoomParticipants', this.id_room);

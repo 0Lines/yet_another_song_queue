@@ -37,16 +37,10 @@ export default {
     },
     watch: {},
     methods: {
-		testeSocket() {
-			this.$socket.emit('eventFromClientTest1', 1);
-		},
-		testeSocket2() {
-			this.$socket.emit('eventFromClientTest2', { customVar: [1, 2, 3], customVar2: "rbc" });
-		},
 		copyRoomUrl() {
 			navigator.clipboard.writeText(window.location.href);
 		}
-	}
+	},
 }
 </script>
 

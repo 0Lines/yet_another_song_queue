@@ -63,7 +63,7 @@ export default {
 			if(!this.$refs.formRoomName.validate())
 				return false;
 
-			const createRoomResponse = await this.$store.dispatch('room/createRoom', this.roomName); //TODO NOME DA SALA CHUMBADO
+			const createRoomResponse = await this.$store.dispatch('room/createRoom', this.roomName);
 			if(createRoomResponse.isError)
 				return false;
 

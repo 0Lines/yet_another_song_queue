@@ -34,7 +34,6 @@ export default {
                 });
 		},
         async removeSongInPlaylist(store, { id_song, id_room }) { 
-            console.log( id_song, id_room );
             return await this._vm.axios.delete('/songs', {
                     data: { 
                         id_song,
@@ -57,15 +56,20 @@ export default {
 		},
 		async enterRoom(store, { id_room, id_user }) {
 			return await this._vm.axios.put('/enter-room', { id_room, id_user })
-				.then((response) => {
+				.then(async (response) => {
+                    await store.dispatch('getRoom', id_room);
+                    store.dispatch('subscribeToRoom');
 					store.dispatch('getPlaylist', id_room);
 					store.dispatch('getRoomParticipants', id_room);
-                    store.dispatch('getRoom', id_room);
 					return response.data;
 				}).catch((error) => { 
 					return handleAxiosError(error);
 				});
 		},
+        subscribeToRoom(store) { 
+            console.log('Subscribing to room', store.state.room.id_room);
+            this._vm.$socket.emit('subscribeToRoom', store.state.room.id_room);
+        },
         async getRoom(store, id_room) {
             return await this._vm.axios.get('rooms/' + id_room)
                 .then((response) => {
