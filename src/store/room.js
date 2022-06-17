@@ -92,8 +92,7 @@ export default {
 			return await this._vm.axios.get('/songs/' + id_room)
 				.then((response) => {
 					store.state.playlist = response.data.map(song => new Song(song));
-                    store.state.playingSong = store.state.playlist[0];
-                    store.state.playlist.shift();
+                    store.state.playingSong = store.state.playlist.shift();
 				}).catch((error) => { 
 					return handleAxiosError(error);
 				});
