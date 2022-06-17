@@ -56,8 +56,8 @@ export default {
 		},
 		async enterRoom(store, { id_room, id_user }) {
 			return await this._vm.axios.put('/enter-room', { id_room, id_user })
-				.then(async (response) => {
-                    await store.dispatch('getRoom', id_room);
+				.then((response) => {
+					store.state.room = new Room(response.data);
                     store.dispatch('subscribeToRoom');
 					store.dispatch('getPlaylist', id_room);
 					store.dispatch('getRoomParticipants', id_room);
@@ -70,6 +70,7 @@ export default {
             console.log('Subscribing to room', store.state.room.id_room);
             this._vm.$socket.emit('subscribeToRoom', store.state.room.id_room);
         },
+        //Remove if it won't be used anymore
         async getRoom(store, id_room) {
             return await this._vm.axios.get('rooms/' + id_room)
                 .then((response) => {
@@ -92,6 +93,7 @@ export default {
 				.then((response) => {
 					store.state.playlist = response.data.map(song => new Song(song));
                     store.state.playingSong = store.state.playlist[0];
+                    store.state.playlist.shift();
 				}).catch((error) => { 
 					return handleAxiosError(error);
 				});
