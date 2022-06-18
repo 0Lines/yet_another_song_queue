@@ -6,29 +6,23 @@
 
         <v-main style="height: 100%;">
             <!--TODO - Center the contents and add the logo -->
-			<v-container class="d-flex flex-column pa-6" style="max-width: 900px; height: 100%;">
-				<v-form ref="formRoomName" v-model="formIsValid" lazy-validation>
-					<div class="d-flex align-center"> 
-                        <v-col>
-                            <h2>🥳 Create my own party</h2>
-                            <v-row class="my-2">
-                                <v-text-field v-model="roomName" color="grey" label="Name" class="mr-5" :rules="roomNameRules"/>
-                                <v-btn x-large width="200" class="font-weight-bold" @click="createRoom">Create Room</v-btn>
-                            </v-row>
-                        </v-col>
-                    </div>
+			<v-container class="d-flex flex-column justify-center pa-6" style="max-width: 900px; height: 100%;">
+				<v-form ref="formRoomName" class="mb-8" lazy-validation>
+					<h2>🥳 Create my own party</h2>
+					<v-text-field v-model="roomName" color="grey" label="Name" class="align-baseline" :rules="roomNameRules">
+						<template v-slot:append-outer>
+							<v-btn x-large width="200" class="font-weight-bold" @click="createRoom">Create Room</v-btn> <!-- TODO ON MOBILE THIS BUTTONS ARE TOO LARGE -->
+						</template>
+					</v-text-field>
 				</v-form>
 
-				<v-form ref="formRoomCode" v-model="formIsValid" lazy-validation>
-					<div class="d-flex align-center"> 
-                        <v-col>
-                            <h2>😎 Join my friends</h2>
-                            <v-row class="my-2">
-                                <v-text-field v-model="roomCode" color="grey" label="Code" class="mr-5" :rules="roomCodeRules"/>
-                                <v-btn x-large width="200" class="font-weight-bold" @click="enterRoom">Enter Room</v-btn>
-                            </v-row>
-                        </v-col>
-					</div>
+				<v-form ref="formRoomCode" lazy-validation>
+					<h2>😎 Join my friends</h2>
+					<v-text-field v-model="roomCode" color="grey" label="Code" class="align-baseline" :rules="roomCodeRules">
+						<template v-slot:append-outer>
+							<v-btn x-large width="200" class="font-weight-bold" @click="enterRoom">Enter Room</v-btn> <!-- TODO ON MOBILE THIS BUTTONS ARE TOO LARGE -->
+						</template>
+					</v-text-field>
                 </v-form>
 			</v-container>
         </v-main>
@@ -44,7 +38,6 @@ export default {
         return {
 			roomName: "",
 			roomCode: "",
-			formIsValid: true,
 
 			roomCodeRules: [
 				v => !!v || 'Code is required'
