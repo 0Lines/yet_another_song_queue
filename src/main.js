@@ -5,6 +5,7 @@ import store from "./store";
 import vuetify from "./plugins/vuetify";
 import axios from 'axios';
 import { io } from "socket.io-client";
+import VueYoutube from 'vue-youtube'
 
 const socket = io(process.env.VUE_APP_SOCKET_URI);
 
@@ -14,7 +15,9 @@ Vue.prototype.$socket = socket;
 
 Vue.prototype.axios = axios.create({
   baseURL: process.env.VUE_APP_API_URI
-})
+});
+
+Vue.use(VueYoutube);
 
 new Vue({
   router,

@@ -4,6 +4,8 @@
 			<v-img class="spin" :class="imageClass" :src="song.thumbnail_link" />
 		</v-avatar>
 
+        <youtube style="visibility:hidden;" :video-id="song.videoid" ref="youtube" @playing="playing"></youtube>
+
 		<v-card flat min-width="0" width="100%">
 			<v-card-title class="d-block text-truncate">
 				<v-icon class="mr-2" color="secondary"> mdi-music </v-icon>{{ song.name }}
@@ -25,7 +27,6 @@
 				<v-btn icon x-large>
 					<v-icon size="54" color="secondary"> mdi-skip-next </v-icon>
 				</v-btn>
-
 			</v-card-actions>
 		</v-card>
 	</v-sheet>
@@ -44,6 +45,7 @@ export default {
     data(){
         return {
             isPlaying: true,
+            videoId: 'lG0Ys-2d4MA'
         }
     },
     directives: {},
@@ -55,6 +57,9 @@ export default {
         imageClass() {
             return this.isPlaying ? 'running' : 'paused'
         },
+        player() {
+          return this.$refs.youtube.player;
+        }
     },
     watch: {},
     methods: {
@@ -62,10 +67,15 @@ export default {
             this.isPlaying ? this.stop() : this.play()
         },
         play() {
+            this.player.playVideo()
             this.isPlaying = true
         },
         stop() {
+            this.player.stopVideo()
             this.isPlaying = false
+        },
+        playing() {
+            console.log('\o/ we are watching!!!')
         }
     },
 }
