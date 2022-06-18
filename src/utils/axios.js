@@ -31,4 +31,56 @@ function handleAxiosError(error) {
 	return { isError: true, errorType, errorStatus, statusMessage, errorMessage }
 }
 
-module.exports = { axiosErrorTypes, handleAxiosError }
+function registerErrorHandledApiCallsOnAxios(axios) {
+	axios.getHandled = function (url, param) {
+		return axios.get(
+			url + param
+		).then((response) => {
+			return response.data;
+		}).catch((error) => { 
+			return handleAxiosError(error);
+		});
+	}
+
+	axios.getQueryHandled = function (url, params) {
+		return axios.get(
+			url, { params }
+		).then((response) => {
+			return response.data;
+		}).catch((error) => { 
+			return handleAxiosError(error);
+		});
+	}
+
+	axios.postHandled = function (url, params) {
+		return axios.post(
+			url, { ...params }
+		).then((response) => {
+			return response.data;
+		}).catch((error) => { 
+			return handleAxiosError(error);
+		});
+	}
+
+	axios.putHandled = function (url, params) {
+		return axios.put(
+			url, { ...params }
+		).then((response) => {
+			return response.data;
+		}).catch((error) => { 
+			return handleAxiosError(error);
+		});
+	}
+
+	axios.deleteHandled = function (url, data) {
+		return axios.delete(
+			url, { data }
+		).then((response) => {
+			return response.data;
+		}).catch((error) => { 
+			return handleAxiosError(error);
+		});
+	}
+}
+
+module.exports = { registerErrorHandledApiCallsOnAxios }

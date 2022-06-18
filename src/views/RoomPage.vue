@@ -4,13 +4,13 @@
 		<v-app-bar color="accent" flat dense app>
 			<v-menu offset-y :close-on-content-click="false" max-width="min-content">
 				<template v-slot:activator="{ on, attrs }">
-					<v-toolbar-title v-bind="attrs" v-on="on">{{ room.room.name }}</v-toolbar-title>
+					<v-toolbar-title v-bind="attrs" v-on="on">{{ room.room.name }} (indicativo clicavel)</v-toolbar-title>
 				</template>
 
 				<UserList
 					color="accent"
 					:loading="loadingUser"
-					:errorMessage="user.account.errorMessage"
+					:errorMessage="room.participants.errorMessage"
 					:users="room.participants"
 					style="min-width: 220px;"
 				/>

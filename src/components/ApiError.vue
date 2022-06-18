@@ -9,7 +9,7 @@
 		</div>
 
 		<div class="text-center font-italic grey--text mb-8" style="margin-top: -30px">
-			❝ {{errorStatusMessage}}: {{errorMessage}} ❞
+			❝ {{errorStatusMessage}} ❞ <span v-html="errorMessage"></span> 
 		</div>
 
 		<div class="text-center">
@@ -59,6 +59,6 @@ export default {
 		text-shadow: -0.08em 0.03em 0.12em rgba(0, 0, 0, 0.7);
 	}
 	.container .bigLetter:not(:first-child) {
-		margin-left: -0.2em;
+		margin-left: -0.3em;
 	}
 </style>

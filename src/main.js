@@ -4,6 +4,7 @@ import router from "./router";
 import store from "./store";
 import vuetify from "./plugins/vuetify";
 import axios from 'axios';
+import { registerErrorHandledApiCallsOnAxios } from "@/utils/axios";
 import { io } from "socket.io-client";
 import VueYoutube from 'vue-youtube'
 
@@ -13,9 +14,10 @@ Vue.config.productionTip = false;
 
 Vue.prototype.$socket = socket;
 
-Vue.prototype.axios = axios.create({
-  baseURL: process.env.VUE_APP_API_URI
-});
+const axiosInstance = axios.create({ baseURL: process.env.VUE_APP_API_URI });
+registerErrorHandledApiCallsOnAxios(axiosInstance);
+Vue.prototype.$axios = axiosInstance;
+
 
 Vue.use(VueYoutube);
 

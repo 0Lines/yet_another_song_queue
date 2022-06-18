@@ -1,4 +1,3 @@
-import { handleAxiosError } from "@/utils/axios";
 import Song from "@/models/Song.js";
 import Room from "@/models/Room.js";
 import User from "@/models/User.js";
@@ -21,81 +20,59 @@ export default {
 	},
 	mutations: {},
 	actions: {
-		//TODO SEARCH IF AXIOS CALLS THAT ONLY RETURN THE DATA NEEDS TO BE IN THE STORE AND IN THIS WAY
 		async addSongInPlaylist(store, mediaURL) {
-			return await this._vm.axios.post('/songs', {
-                    search_text: mediaURL,	//TODO API RECEIVES LINK VIA SEARCH_TEXT
-                    id_room: store.state.room.id_room
-                }).then((response) => {
-                    //return new Song(response.data);
-                    return true; //TODO RETHINK WHAT THIS REQUEST SHOULD DO IF SUCCESS, SINCE SOCKET WILL HANDLE THE SUCCESS
-                }).catch((error) => { 
-                    return handleAxiosError(error);
-                });
+			const response = await this._vm.$axios.postHandled('/songs', {
+				search_text: mediaURL,	//API RECEIVES LINK VIA SEARCH_TEXT
+				id_room: store.state.room.id_room
+			});
+
+			//BUSINESS RULES ARE ALLOWED HERE =)
+			return response;
 		},
         async removeSongInPlaylist(store, { id_song, id_room }) { 
-            return await this._vm.axios.delete('/songs', {
-                    data: { 
-                        id_song,
-                        id_room
-                    },
-                }).then((response) => { 
-                    console.log('Song removed!');
-                    return true; //TODO - Think about a proper response
-                }).catch((error) => {
-                    return handleAxiosError(error);
-                });
+			const response = await this._vm.$axios.deleteHandled('/songs', { id_song, id_room });
+			//BUSINESS RULES ARE ALLOWED HERE =)
+			return response;
         },
 		async createRoom(store, name) {
-			return await this._vm.axios.post('/rooms', { name })
-				.then((response) => {
-					return response.data;
-				}).catch((error) => { 
-					return handleAxiosError(error);
-				});
+			const response = await this._vm.$axios.postHandled('/rooms', { name });
+			//BUSINESS RULES ARE ALLOWED HERE =)
+			return response;
 		},
 		async enterRoom(store, { id_room, id_user }) {
-			return await this._vm.axios.put('/enter-room', { id_room, id_user })
-				.then((response) => {
-					store.state.room = new Room(response.data);
-                    store.dispatch('subscribeToRoom');
-					store.dispatch('getPlaylist', id_room);
-					store.dispatch('getRoomParticipants', id_room);
-					return response.data;
-				}).catch((error) => { 
-					return handleAxiosError(error);
-				});
+			const response = await this._vm.$axios.putHandled('/enter-room', { id_room, id_user });
+			if(response.isError) {
+				return response; //TODO HANDLE ERROR AND SUCCESS BETTER
+			}
+
+			store.state.room = new Room(response);
+			store.dispatch('subscribeToRoom');
+			store.dispatch('getPlaylist', id_room);
+			store.dispatch('getRoomParticipants', id_room);
+			return response;
 		},
         subscribeToRoom(store) { 
             console.log('Subscribing to room', store.state.room.id_room);
             this._vm.$socket.emit('subscribeToRoom', store.state.room.id_room);
         },
-        //Remove if it won't be used anymore
-        async getRoom(store, id_room) {
-            return await this._vm.axios.get('rooms/' + id_room)
-                .then((response) => {
-					store.state.room = new Room(response.data);
-                    return response.data;
-                }).catch((error) => {
-					return handleAxiosError(error);
-                });
-        },
 		async getRoomParticipants(store, id_room) {
-			return await this._vm.axios.get('/rooms/participants/' + id_room)
-				.then((response) => {
-					store.state.participants = response.data.map(user => new User(user));
-				}).catch((error) => { 
-					return handleAxiosError(error);
-				});
+			const response = await this._vm.$axios.getHandled('/rooms/participants/', id_room);
+			if(response.isError) { //TODO HANDLE ERROR AND SUCCESS BETTER
+				return false;
+			}
+
+			store.state.participants = response.map(user => new User(user));
+			return true;
 		},
 		async getPlaylist(store, id_room) {
-			return await this._vm.axios.get('/songs/' + id_room)
-				.then((response) => {
-					store.state.playlist = response.data.map(song => new Song(song));
-                    store.state.playingSong = store.state.playlist.shift();
-				}).catch((error) => { 
-					return handleAxiosError(error);
-				});
+			const response = await this._vm.$axios.getHandled('/songs/', id_room);
+			if(response.isError) { //TODO HANDLE ERROR AND SUCCESS BETTER
+				return false;
+			}
+
+			store.state.playlist = response.map(song => new Song(song));
+			store.state.playingSong = store.state.playlist.shift();
+			return true;
 		},
 	},
 	modules: {},
