@@ -52,29 +52,29 @@ export default {
 		},
 		async enterRoom(store, id_room) {
 			store.state.loadingRoomInfo = true;
+			store.state.pageError = null;
 
 			let currentUser = store.rootGetters['user/userAccount'];
 			if(!currentUser.id_user)
 				currentUser = await store.dispatch('user/createAndAssignNewUser', null, {root: true});
 
 			if(currentUser.isError) {
-				this.pageError = currentUser;
-				return false;
-			}
-
-			const response = await this._vm.$axios.putHandled('/enter-room', { id_room, id_user: currentUser.id_user });
-			if(response.isError) {
-				store.state.pageError = response;
+				store.state.pageError = currentUser;
 			} else {
-				store.state.roomInfo = new Room(response);
+				const response = await this._vm.$axios.putHandled('/enter-room', { id_room, id_user: currentUser.id_user });
+				
+				if(response.isError) {
+					store.state.pageError = response;
+				} else {
+					store.state.roomInfo = new Room(response);
 
-				store.dispatch('subscribeToRoom');
-				store.dispatch('getPlaylist', id_room);
-				store.dispatch('getRoomParticipants', id_room);
+					store.dispatch('subscribeToRoom');
+					store.dispatch('getPlaylist', id_room);
+					store.dispatch('getRoomParticipants', id_room);
+				}
 			}
 
 			store.state.loadingRoomInfo = false;
-			return !response.isError;
 		},
         subscribeToRoom(store) { 
             console.log('Subscribing to room', store.state.roomInfo.id_room);
@@ -91,7 +91,6 @@ export default {
 			}
 
 			store.state.loadingParticipants = false;
-			return !response.isError;
 		},
 		async getPlaylist(store, id_room) {
 			store.state.loadingPlaylist = true;
@@ -105,7 +104,6 @@ export default {
 			}
 
 			store.state.loadingPlaylist = false;
-			return !response.isError;
 		},
 	},
 	modules: {},

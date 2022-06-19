@@ -20,24 +20,18 @@ export default {
 		}
 	},
 	actions: {
-		async getNewUser(store) {
-			const response = await this._vm.$axios.postHandled('/users', {});
-			if(response.isError) {
-				return response; //TODO HANDLE ERROR AND SUCCESS BETTER
-			}
-
-			return new User(response);
-        },
 		async createAndAssignNewUser(store) {
 			store.commit('setUserAccount', {});
 			store.commit('setLoadingUserAccount', true);
 
-			const createNewUserResponse = await store.dispatch('getNewUser');
-			store.commit('setUserAccount', createNewUserResponse);
-			
+			let newUser = await this._vm.$axios.postHandled('/users', {});
+			if(!newUser.isError)
+				newUser = new User(newUser);
+
+			store.commit('setUserAccount', newUser);
 			store.commit('setLoadingUserAccount', false);
 
-			return createNewUserResponse;
+			return newUser;
 		}
 	},
 	modules: {},
