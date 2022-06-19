@@ -7,7 +7,7 @@
         <v-main style="height: 100%;">
             <!--TODO - Center the contents and add the logo -->
 			<v-container class="d-flex flex-column justify-center pa-6" style="max-width: 900px; height: 100%;">
-				<v-form ref="formRoomName" class="mb-8" lazy-validation>
+				<v-form ref="formRoomName" class="mb-8" lazy-validation @submit="createRoom" onSubmit="return false;">
 					<h2>🥳 Create my own party</h2>
 					<v-text-field v-model="roomName" color="grey" label="Name" class="align-baseline" :rules="roomNameRules">
 						<template v-slot:append-outer>
@@ -16,7 +16,7 @@
 					</v-text-field>
 				</v-form>
 
-				<v-form ref="formRoomCode" lazy-validation>
+				<v-form ref="formRoomCode" lazy-validation @submit="enterRoom" onSubmit="return false;">
 					<h2>😎 Join my friends</h2>
 					<v-text-field v-model="roomCode" color="grey" label="Code" class="align-baseline" :rules="roomCodeRules">
 						<template v-slot:append-outer>
