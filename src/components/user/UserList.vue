@@ -6,7 +6,7 @@
 			Erro:<br/> {{errorMessage}}
 		</v-card-text>
 
-		<v-list v-else :color="color">
+		<v-list v-else :color="color" width="100%">
 			<UserListItem v-for="(user, index) in users" :key="index" v-bind="getUserPropObject(user)"/>
 		</v-list>
 	</v-card>

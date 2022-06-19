@@ -8,14 +8,14 @@ export default class Song {
     priority = 0;
     id_room = "";
 
-    constructor(song) {
-        this.id_song = song.id_song;
-        this.name = song.name;
-        this.artist = song.artist;
-        this.videoid = song.videoid;
-        this.music_link = song.music_link;
-        this.thumbnail_link = song.thumbnail_link;
-        this.priority = song.priority;
-        this.id_room = song.id_room;
+    constructor({ id_song, name, artist, videoid, music_link, thumbnail_link, priority, id_room }) {
+        this.id_song = id_song;
+        this.name = name;
+        this.artist = artist;
+        this.videoid = videoid;
+        this.music_link = music_link;
+        this.thumbnail_link = thumbnail_link;
+        this.priority = priority;
+        this.id_room = id_room;
     }
 }

@@ -2,7 +2,7 @@
     <v-sheet>
 		<SearchBar class="round-container mb-5"/>
 
-		<PlayingSong v-if="currentPlayingSong" class="round-container mb-5" :song="currentPlayingSong" />
+		<PlayingSong v-if="currentPlayingSong.id_song" class="round-container mb-5" :song="currentPlayingSong" />
 
 		<PlayList :playlist="playlist" class="round-container mb-5"/>
     </v-sheet>

@@ -3,7 +3,7 @@
 
 		<v-app-bar color="accent" flat app>
 			<v-icon class="mr-4" color="warning">mdi-music-circle</v-icon>
-			<v-toolbar-title class="mr-3 text-capitalize">{{ room.room.name }}</v-toolbar-title> <!-- TODO MISSING SOME LOADING HERE -->
+			<v-toolbar-title class="mr-3 text-capitalize">{{ room.roomInfo.name }}</v-toolbar-title> <!-- TODO MISSING SOME LOADING HERE -->
 			
 			<v-menu offset-y :close-on-content-click="false" max-width="min-content" max-height="400">
 				<template v-slot:activator="{ on, attrs }">
@@ -38,7 +38,7 @@
 					<div v-bind="attrs" v-on="on"> <!-- TODO DIV TO HANDLE ACTIVATOR EVENTS (obs: if u know how to remove this and make the custom component handle it pls do it) -->
 						<UserAvatar
 							color="accent"
-							:loading="loadingUser"
+							:loading="user.loadingUserAccount"
 							:isError="user.account.isError"
 							:userName="user.account.nickname"
 							:userAvatarSrc="userAvatarSrc"
@@ -49,9 +49,9 @@
 
 				<v-sheet color="accent">
 					<UserListItem
-						:loading="loadingUser"
+						:loading="user.loadingUserAccount"
 						:errorMessage="user.account.errorMessage"
-						:userId="user.account.id"
+						:userId="user.account.id_user"
 						:userName="user.account.nickname"
 						:userAvatarSrc="userAvatarSrc"
 						style="min-width: 220px;"
@@ -64,13 +64,13 @@
         <v-main style="height: 100%;">
 			<v-container class="d-flex flex-column pa-6" style="max-width: 1000px; height: 100%;">
 
-				<v-progress-circular v-if="loading" class="ma-auto" indeterminate/>
+				<v-progress-circular v-if="room.loadingRoomInfo" class="ma-auto" indeterminate/>
 
 				<ApiError
-					v-else-if="pageError"
-					:errorStatusCode="pageError.errorStatus"
-					:errorStatusMessage="pageError.statusMessage"
-					:errorMessage="pageError.errorMessage"
+					v-else-if="room.pageError"
+					:errorStatusCode="room.pageError.errorStatus"
+					:errorStatusMessage="room.pageError.statusMessage"
+					:errorMessage="room.pageError.errorMessage"
 				/>
 
                 <Room v-else/>
@@ -94,9 +94,6 @@ export default {
     mixins: {},
     data() {
         return {
-			loading: false,
-			pageError: null,
-
 			timeout: null,
 			shareTooltip: false,
 			tooltipMessage: ""
@@ -115,22 +112,6 @@ export default {
 		user: {
 			get() {
 				return this.$store.state.user;
-			}
-		},
-		loadingUser: {
-			get () {
-				return this.user.loadingUserAccount;
-			},
-			set (value) {
-				this.$store.commit('user/setLoadingUserAccount', value)
-			}
-		},
-		loadingRoom: {
-			get () {
-				return this.room.loadingRoom;
-			},
-			set (value) {
-				this.$store.commit('user/setLoadingUserAccount', value)
 			}
 		},
 		userAvatarSrc() {
@@ -163,33 +144,14 @@ export default {
 			clearTimeout(this.timeout);
 			this.timeout = setTimeout(() => { this.shareTooltip = false }, 1500);
 		},
-		async getCurrentUserOrCreateOne() {
-			const user = this.$store.getters['user/userAccount'];
-			if(user.id)
-				return user
-			
-			return await this.$store.dispatch('user/createAndAssignNewUser');
-		},
-		async initialize() {
-			this.loading = true;
-
-			const currentUser = await this.getCurrentUserOrCreateOne();
-			if(currentUser.isError) {
-				this.pageError = currentUser;
-			} else {
-				const enterRoomResponse = await this.$store.dispatch('room/enterRoom', { id_room: this.id_room, id_user: currentUser.id });
-				if(enterRoomResponse.isError) 
-					this.pageError = enterRoomResponse;
-			}
-
-			this.loading = false;
-		}
 	},
 	created() {
 		if(!this.id_room) {
 			this.$router.push({ name: 'home' });
 			return false;
 		}
+
+		this.$store.dispatch('room/enterRoom', this.id_room);
 
 		this.$socket.on('refreshUsers', () => {
             console.log("RECEIVED: Refresh Users - Id Room: ", this.id_room);
@@ -200,8 +162,6 @@ export default {
             console.log("RECEIVED: Refresh Playlist - Id Room: ", this.id_room);
 	        this.$store.dispatch('room/getPlaylist', this.id_room);
 		});
-
-		this.initialize();
 	}
 }
 </script>
