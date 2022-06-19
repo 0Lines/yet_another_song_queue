@@ -2,11 +2,9 @@
     <v-sheet>
 		<SearchBar class="round-container mb-5"/>
 
-		<PlayingSong v-if="currentPlayingSong.id_song" class="round-container mb-5" :song="currentPlayingSong" />
+		<PlayingSong v-if="currentPlayingSong" class="round-container mb-5" :song="currentPlayingSong" />
 
 		<PlayList :playlist="playlist" class="round-container mb-5"/>
-
-		<v-btn @click="copyRoomUrl">Share Room</v-btn>
     </v-sheet>
 </template>
 
@@ -25,9 +23,7 @@ export default {
     },
     directives: {},
     components: { 
-        PlayList, 
-        PlayingSong,
-        SearchBar,
+        PlayList, PlayingSong, SearchBar,
     },
     computed: {
         ...mapGetters({
@@ -36,11 +32,7 @@ export default {
         }),
     },
     watch: {},
-    methods: {
-		copyRoomUrl() {
-			navigator.clipboard.writeText(window.location.href);
-		}
-	},
+    methods: {},
 }
 </script>
 

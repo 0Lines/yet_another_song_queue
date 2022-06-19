@@ -5,6 +5,7 @@ import User from "@/models/User.js";
 export default {
 	namespaced: true,
 	state: {
+		loadingRoom: false,
 		room: new Room({}),
 		participants: [],
 		playingSong: new Song({}),
@@ -18,7 +19,11 @@ export default {
 			return state.playingSong;
 		}
 	},
-	mutations: {},
+	mutations: {
+		setLoadingRoom(state, value) {
+			state.loadingRoom = value;
+		}
+	},
 	actions: {
 		async addSongInPlaylist(store, mediaURL) {
 			const response = await this._vm.$axios.postHandled('/songs', {
@@ -42,6 +47,7 @@ export default {
 		async enterRoom(store, { id_room, id_user }) {
 			const response = await this._vm.$axios.putHandled('/enter-room', { id_room, id_user });
 			if(response.isError) {
+				store.state.room = response;
 				return response; //TODO HANDLE ERROR AND SUCCESS BETTER
 			}
 

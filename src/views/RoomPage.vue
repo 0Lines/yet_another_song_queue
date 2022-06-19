@@ -1,22 +1,38 @@
 <template>
     <v-card tile flat min-height="100vh">
 
-		<v-app-bar color="accent" flat dense app>
-			<v-menu offset-y :close-on-content-click="false" max-width="min-content">
+		<v-app-bar color="accent" flat app>
+			<v-icon class="mr-4" color="warning">mdi-music-circle</v-icon>
+			<v-toolbar-title class="mr-3 text-capitalize">{{ room.room.name }}</v-toolbar-title> <!-- TODO MISSING SOME LOADING HERE -->
+			
+			<v-menu offset-y :close-on-content-click="false" max-width="min-content" max-height="400">
 				<template v-slot:activator="{ on, attrs }">
-					<v-toolbar-title v-bind="attrs" v-on="on">{{ room.room.name }} (indicativo clicavel)</v-toolbar-title>
+					<v-btn icon v-bind="attrs" v-on="on">
+						<v-icon>mdi-account-multiple</v-icon>
+					</v-btn>
 				</template>
 
 				<UserList
 					color="accent"
-					:loading="loadingUser"
+					:loading="false"
 					:errorMessage="room.participants.errorMessage"
-					:users="room.participants"
+					:users="room.participants.slice().sort((a, b) => a.nickname > b.nickname ? 1 : -1 )"
 					style="min-width: 220px;"
 				/>
 			</v-menu>
 
-			<v-spacer />
+			<v-tooltip v-model="shareTooltip" bottom>
+				<template v-slot:activator="{}">
+					<v-btn class="mr-2" icon @click="shareRoom">
+						<v-icon >mdi-share</v-icon>
+					</v-btn>
+				</template>
+
+          		<span>{{tooltipMessage}}</span>
+        	</v-tooltip>
+
+			<v-spacer/>
+
 			<v-menu offset-y :close-on-content-click="false" max-width="min-content">
 				<template v-slot:activator="{ on, attrs }">
 					<div v-bind="attrs" v-on="on"> <!-- TODO DIV TO HANDLE ACTIVATOR EVENTS (obs: if u know how to remove this and make the custom component handle it pls do it) -->
@@ -26,6 +42,7 @@
 							:isError="user.account.isError"
 							:userName="user.account.nickname"
 							:userAvatarSrc="userAvatarSrc"
+							style="max-width: fit-content;"
 						/>
 					</div>
 				</template>
@@ -41,6 +58,7 @@
 					/>
 				</v-sheet>
 			</v-menu>
+			
 		</v-app-bar>
 
         <v-main style="height: 100%;">
@@ -63,7 +81,7 @@
 </template>
 
 <script>
-import Room from '@/components/Room.vue'
+import Room from '@/components/room/Room.vue'
 import UserAvatar from '@/components/user/UserAvatar.vue'
 import UserList from '@/components/user/UserList.vue'
 import ApiError from '@/components/ApiError.vue'
@@ -78,6 +96,10 @@ export default {
         return {
 			loading: false,
 			pageError: null,
+
+			timeout: null,
+			shareTooltip: false,
+			tooltipMessage: ""
 		}
     },
     directives: {},
@@ -103,6 +125,14 @@ export default {
 				this.$store.commit('user/setLoadingUserAccount', value)
 			}
 		},
+		loadingRoom: {
+			get () {
+				return this.room.loadingRoom;
+			},
+			set (value) {
+				this.$store.commit('user/setLoadingUserAccount', value)
+			}
+		},
 		userAvatarSrc() {
 			if(!this.user.account.profilesrc)
 				return null;
@@ -111,6 +141,28 @@ export default {
 	},
 	watch: {},
 	methods: {
+		async shareRoom() {
+			if(this.$isMobile) {
+				try {
+					await navigator.share({
+						title: 'YASQ',
+						text: 'Join my party at YASQ',
+						url: window.location.href,
+					});
+
+					this.tooltipMessage = "Success!";
+				} catch(err) {
+					this.tooltipMessage = "Error: " + err;
+				}
+			} else {
+				navigator.clipboard.writeText(window.location.href);
+				this.tooltipMessage = "Link copied!";
+			}
+
+			this.shareTooltip = true;
+			clearTimeout(this.timeout);
+			this.timeout = setTimeout(() => { this.shareTooltip = false }, 1500);
+		},
 		async getCurrentUserOrCreateOne() {
 			const user = this.$store.getters['user/userAccount'];
 			if(user.id)

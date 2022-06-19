@@ -17,9 +17,9 @@ import UserListItem from '@/components/user/UserListItem.vue';
 
 export default {
 	props: {
-		color:			{ type: String }, /* TODO REVER ESSA PASSADA DE COLOR PARA OS COMPONENTES GENÉRICOS */
-		loading: 		{ type: Boolean, default: false },
-		errorMessage: 	{ type: String },
+		color:			String, /* TODO REVER ESSA PASSADA DE COLOR PARA OS COMPONENTES GENÉRICOS */
+		loading: 		Boolean,
+		errorMessage: 	String,
 
 		users: 			{ type: Array, default: () => [] },
 	},
@@ -37,7 +37,7 @@ export default {
 	methods: {
 		getUserPropObject(user) { //TODO REPENSAR O USO DAS VARIAVES, PROPS E O QUÃO GENÉRICO ESTÁ ISSO
 			return {
-				userName:user.nickname,
+				userName: user.nickname,
 				userAvatarSrc: `${process.env.VUE_APP_API_URI}${user.profilesrc}` 
 			}
 		}

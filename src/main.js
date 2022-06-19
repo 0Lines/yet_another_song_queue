@@ -18,6 +18,7 @@ const axiosInstance = axios.create({ baseURL: process.env.VUE_APP_API_URI });
 registerErrorHandledApiCallsOnAxios(axiosInstance);
 Vue.prototype.$axios = axiosInstance;
 
+Vue.prototype.$isMobile = navigator.userAgentData.mobile;
 
 Vue.use(VueYoutube);
 
