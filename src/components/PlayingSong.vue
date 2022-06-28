@@ -4,7 +4,7 @@
 			<v-img class="spin" :class="imageClass" :src="song.thumbnail_link" />
 		</v-avatar>
 
-        <youtube style="visibility:hidden;" :video-id="song.videoid" ref="youtube" @playing="playing"></youtube>
+        <youtube style="display: none;" :video-id="song.videoid" ref="youtube" @playing="playing"></youtube>
 
 		<v-card flat min-width="0" width="100%">
 			<v-card-title class="d-block text-truncate">
@@ -42,10 +42,9 @@ export default {
 		}
     },
     mixins: {},
-    data(){
+    data() {
         return {
-            isPlaying: true,
-            videoId: 'lG0Ys-2d4MA'
+            videoId: ''
         }
     },
     directives: {},
@@ -58,7 +57,13 @@ export default {
             return this.isPlaying ? 'running' : 'paused'
         },
         player() {
-          return this.$refs.youtube.player;
+            return this.$refs.youtube.player
+        },
+        id_room() {
+            return this.$store.state.room.roomInfo.id_room
+        },
+        isPlaying() {
+            return this.$store.state.room.isPlaying
         }
     },
     watch: {},
@@ -67,17 +72,28 @@ export default {
             this.isPlaying ? this.stop() : this.play()
         },
         play() {
-            this.player.playVideo()
-            this.isPlaying = true
+            this.$socket.emit('play', this.id_room)
         },
         stop() {
-            this.player.stopVideo()
-            this.isPlaying = false
+            console.log("para sua puta")
+            this.$socket.emit('pause', this.id_room)
         },
         playing() {
             console.log('\o/ we are watching!!!')
         }
     },
+    created() {
+		this.$socket.on('play', () => {
+            console.log("RECEIVED: Play Music- Id Room: ", this.id_room)
+	        this.$store.dispatch('room/play', this.id_room)
+            this.player.playVideo()
+		});
+		this.$socket.on('pause', () => {
+            console.log("RECEIVED: Pause Music - Id Room: ", this.id_room)
+	        this.$store.dispatch('room/pause', this.id_room)
+            this.player.pauseVideo()
+		});
+    }
 }
 </script>
 

@@ -15,6 +15,7 @@ export default {
 
 		loadingPlaylist: false,
 		playingSong: new Song({}),
+        isPlaying: false,
 		playlist: [],
 	},
 	getters: {
@@ -31,6 +32,12 @@ export default {
 		}
 	},
 	actions: {
+        play(store) {
+            store.state.isPlaying = true
+        },
+        pause(store) {
+            store.state.isPlaying = false 
+        },
 		async addSongInPlaylist(store, mediaURL) {
 			const response = await this._vm.$axios.postHandled('/songs', {
 				search_text: mediaURL,	//API RECEIVES LINK VIA SEARCH_TEXT
