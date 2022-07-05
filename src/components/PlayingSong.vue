@@ -4,7 +4,7 @@
 			<v-img class="spin" :class="imageClass" :src="song.thumbnail_link" />
 		</v-avatar>
 
-        <youtube style="display: none;" :video-id="song.videoid" ref="youtube" @playing="playing"></youtube>
+        <youtube style="" :video-id="song.videoid" ref="youtube" />
 
 		<v-card flat min-width="0" width="100%">
 			<v-card-title class="d-block text-truncate">
@@ -75,23 +75,32 @@ export default {
             this.$socket.emit('play', this.id_room)
         },
         stop() {
-            console.log("para sua puta")
             this.$socket.emit('pause', this.id_room)
         },
-        playing() {
-            console.log('\o/ we are watching!!!')
-        }
     },
     created() {
-		this.$socket.on('play', () => {
-            console.log("RECEIVED: Play Music- Id Room: ", this.id_room)
+        this.$socket.on('getCurrentState', (state) => {
+            console.log('Current state is: ', state);
+            if (state.isPlaying) {
+                this.$store.dispatch('room/play');
+                this.$refs.youtube.player.seekTo(state.startFrom); 
+                this.$refs.youtube.player.playVideo()
+            } else {
+                this.$store.dispatch('room/pause');
+                this.$refs.youtube.player.pauseVideo()
+            }
+        });
+		this.$socket.on('play', (startFrom) => {
+            this.$refs.youtube.player.seekTo(startFrom); 
+            console.log("Current time: ", startFrom);
+            console.log("RECEIVED: Play Music - Id Room: ", this.id_room)
 	        this.$store.dispatch('room/play', this.id_room)
-            this.player.playVideo()
+            this.$refs.youtube.player.playVideo()
 		});
 		this.$socket.on('pause', () => {
             console.log("RECEIVED: Pause Music - Id Room: ", this.id_room)
 	        this.$store.dispatch('room/pause', this.id_room)
-            this.player.pauseVideo()
+            this.$refs.youtube.player.pauseVideo()
 		});
     }
 }

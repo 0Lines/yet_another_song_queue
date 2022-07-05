@@ -86,6 +86,7 @@ export default {
         subscribeToRoom(store) { 
             console.log('Subscribing to room', store.state.roomInfo.id_room);
             this._vm.$socket.emit('subscribeToRoom', store.state.roomInfo.id_room);
+            this._vm.$socket.emit('getCurrentState', store.state.roomInfo.id_room);
         },
 		async getRoomParticipants(store, id_room) {
 			store.state.loadingParticipants = true;
