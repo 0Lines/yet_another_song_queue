@@ -7,7 +7,7 @@
         <v-main style="height: 100%;">
             <!--TODO - Center the contents and add the logo -->
 			<v-container class="d-flex flex-column justify-center pa-6" style="max-width: 900px; height: 100%;">
-				<v-form ref="formRoomName" class="mb-8" lazy-validation @submit="createRoom" onSubmit="return false;">
+				<v-form ref="formRoomName" lazy-validation class="mb-8" @submit="createRoom" onSubmit="return false;">
 					<h2>🥳 Create my own party</h2>
 					<v-text-field v-model="roomName" color="grey" label="Name" class="align-baseline" :rules="roomNameRules">
 						<template v-slot:append-outer>
@@ -39,11 +39,12 @@ export default {
 			roomName: "",
 			roomCode: "",
 
-			roomCodeRules: [
-				v => !!v || 'Code is required'
-			],
 			roomNameRules: [
 				v => !!v || 'Name is required'
+			],
+			roomCodeRules: [
+				v => !!v || 'Code is required',
+				v => this.roomCodeIndexInUrl(v) == -1 || !!this.getRoomCodeFromUrl(v) || 'Code is required',
 			],
         }
     },
@@ -52,6 +53,19 @@ export default {
     computed: {},
     watch: {},
     methods: {
+		roomCodeIndexInUrl(url) {
+			const index = url.lastIndexOf("room/");
+			if(index == -1)
+				return -1
+			return index + 5; //5 is the size of "room/"
+		},
+		getRoomCodeFromUrl(url) {
+			const urlMatchIndex = this.roomCodeIndexInUrl(url);
+			if(urlMatchIndex != -1)
+				return url.substring(urlMatchIndex); 
+			
+			return "";
+		},
 		async createRoom() {
 			if(!this.$refs.formRoomName.validate())
 				return false;
@@ -65,8 +79,12 @@ export default {
 		async enterRoom() {
 			if(!this.$refs.formRoomCode.validate())
 				return false;
-				
-			this.$router.push({ name: 'room', params: { id_room: this.roomCode } });
+
+			let roomCode = this.getRoomCodeFromUrl(this.roomCode);
+			if(!roomCode)
+				roomCode = this.roomCode
+
+			this.$router.push({ name: 'room', params: { id_room: roomCode } });
 		},
 	},
 }
