@@ -16,7 +16,7 @@
 			</v-card-subtitle>
 
 			<v-card-actions class="justify-center">
-				<v-btn icon x-large>
+				<v-btn icon x-large @="previousSong">
 					<v-icon size="54" color="secondary"> mdi-skip-previous </v-icon>
 				</v-btn>
 
@@ -24,7 +24,7 @@
 					<v-icon size="58" color="secondary"> {{ playButtonIcon }} </v-icon>
 				</v-btn>
 
-				<v-btn icon x-large>
+				<v-btn icon x-large @click="nextSong">
 					<v-icon size="54" color="secondary"> mdi-skip-next </v-icon>
 				</v-btn>
 			</v-card-actions>
@@ -64,7 +64,7 @@ export default {
         },
         isPlaying() {
             return this.$store.state.room.isPlaying
-        }
+        },
     },
     watch: {},
     methods: {
@@ -76,6 +76,12 @@ export default {
         },
         stop() {
             this.$socket.emit('pause', this.id_room)
+        },
+        nextSong() {
+            this.$store.dispatch('room/nextSong');
+        },
+        previousSong() {
+            this.$store.dispatch('room/previousSong');
         },
     },
     created() {
@@ -90,6 +96,10 @@ export default {
                 this.$refs.youtube.player.pauseVideo()
             }
         });
+        this.$socket.on('getCurrentSong', (id_song) => {
+            if (state.id_song && (state?.id_song != this.$store.playingSong))
+                this.$store.dispatch('changePlayingSong', state.id_song);
+        });
 		this.$socket.on('play', (startFrom) => {
             this.$refs.youtube.player.seekTo(startFrom); 
             console.log("Current time: ", startFrom);
@@ -101,6 +111,10 @@ export default {
             console.log("RECEIVED: Pause Music - Id Room: ", this.id_room)
 	        this.$store.dispatch('room/pause', this.id_room)
             this.$refs.youtube.player.pauseVideo()
+		});
+		this.$socket.on('changeCurrentSong', (id_song) => {
+            console.log("RECEIVED: Change Current Song - Id Song: ", id_song);
+	        this.$store.dispatch('room/changePlayingSong', id_song);
 		});
     }
 }

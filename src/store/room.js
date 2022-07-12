@@ -83,11 +83,6 @@ export default {
 
 			store.state.loadingRoomInfo = false;
 		},
-        subscribeToRoom(store) { 
-            console.log('Subscribing to room', store.state.roomInfo.id_room);
-            this._vm.$socket.emit('subscribeToRoom', store.state.roomInfo.id_room);
-            this._vm.$socket.emit('getCurrentState', store.state.roomInfo.id_room);
-        },
 		async getRoomParticipants(store, id_room) {
 			store.state.loadingParticipants = true;
 
@@ -96,6 +91,7 @@ export default {
 				store.state.participants = response;
 			} else {
 				store.state.participants = response.map(user => new User(user));
+                store.state.playingSong = new Song(store.state.playlist.shift() ?? {});
 			}
 
 			store.state.loadingParticipants = false;
@@ -108,11 +104,46 @@ export default {
 				store.state.playlist = response;
 			} else {
 				store.state.playlist = response.map(song => new Song(song));
-				store.state.playingSong = new Song(store.state.playlist.shift() ?? {});
+                this._vm.$socket.emit('getCurrentSong', store.state.roomInfo.id_room);
 			}
 
 			store.state.loadingPlaylist = false;
 		},
+        subscribeToRoom(store) { 
+            console.log('Subscribing to room', store.state.roomInfo.id_room);
+            this._vm.$socket.emit('subscribeToRoom', store.state.roomInfo.id_room);
+            this._vm.$socket.emit('getCurrentState', store.state.roomInfo.id_room);
+        },
+        nextSong(store) {
+            const nextSong = store.state.playlist.find((song) => {
+                return song.priority > store.state.playingSong.priority;
+            });
+
+            if (nextSong)
+                store.dispatch('requestSongChange', nextSong.id_song);
+        },
+        previousSong(store) {
+            const previousSong = store.state.playlist.find((song) => {
+                return song.priority < store.state.playingSong.priority;
+            });
+
+            if (previousSong)
+                store.dispatch('requestSongChange', previousSong.id_song);
+        },
+        requestSongChange(store, id_song) {
+            console.log('Requesting Song Change - Id Song: ', id_song);
+            this._vm.$socket.emit('changeCurrentSong', {
+                id_room: store.state.roomInfo.id_room,
+                id_song: id_song,
+            });
+        },
+        changePlayingSong(store, id_song) {
+            console.log('Playing Song - Id Song: ', id_song);
+            store.state.playingSong = store.state.playlist.find((song) => {
+                return song.id_song == id_song;
+            });
+            //List should start from the current song
+        },
 	},
 	modules: {},
 };
