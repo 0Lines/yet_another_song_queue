@@ -2,7 +2,7 @@
     <v-card tile flat min-height="100vh">
 
 		<v-app-bar color="accent" flat app>
-			<v-icon class="mr-4" color="warning">mdi-music-circle</v-icon>
+			<v-icon class="mr-4" color="warning" @click="goToHome">mdi-music-circle</v-icon>
 			<v-toolbar-title class="mr-3 text-capitalize">{{ room.roomInfo.name }}</v-toolbar-title> <!-- TODO MISSING SOME LOADING HERE -->
 			
 			<v-menu offset-y :close-on-content-click="false" max-width="min-content" max-height="400">
@@ -127,6 +127,9 @@ export default {
 	},
 	watch: {},
 	methods: {
+		goToHome() {
+			this.$router.push("/home")
+		},
 		async shareRoom() {
 			if(this.$isMobile) {
 				try {
@@ -154,6 +157,9 @@ export default {
 		this.$store.dispatch('room/enterRoom', this.id_room);
 
 		/* TODO SEPARATE BELOW ROOM EVENTS IN ANOTHER FILE OR SOMETHING LIKE THAT... */
+
+		if(this.$socket._callbacks != undefined) //DO NOT REGISTER SOCKET EVENTS AGAIN IF THEY ALREADY EXISTS (é meio gambi)
+			return false;
 
 		this.$socket.on('refreshUsers', () => {
             console.log("RECEIVED: Refresh Users - Id Room: ", this.id_room);
@@ -197,6 +203,7 @@ export default {
             console.log("RECEIVED: Change Current Song - Id Song: ", id_song);
 	        this.$store.dispatch('room/changePlayingSong', id_song);
 		});
+
 	}
 }
 </script>
