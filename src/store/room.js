@@ -147,9 +147,11 @@ export default {
         },
         changePlayingSong(store, id_song) {
             console.log('Playing Song - Id Song: ', id_song);
-            store.state.playingSong = store.state.playlist.find((song) => {
+			const song = store.state.playlist.find((song) => {
                 return song.id_song == id_song;
             });
+			console.log(song);
+            store.state.playingSong = song;
             //List should start from the current song
         },
 	},

@@ -158,51 +158,50 @@ export default {
 
 		/* TODO SEPARATE BELOW ROOM EVENTS IN ANOTHER FILE OR SOMETHING LIKE THAT... */
 
-		if(this.$socket._callbacks != undefined) //DO NOT REGISTER SOCKET EVENTS AGAIN IF THEY ALREADY EXISTS (é meio gambi)
-			return false;
+		if(this.$socket._callbacks == undefined) { //ONLY REGISTER SOCKET EVENTS IF THEY WERE NOT YET REGISTERED (é meio gambi)
+			this.$socket.on('refreshUsers', () => {
+				console.log("RECEIVED: Refresh Users - Id Room: ", this.id_room);
+				this.$store.dispatch('room/getRoomParticipants', this.id_room);
+			});
 
-		this.$socket.on('refreshUsers', () => {
-            console.log("RECEIVED: Refresh Users - Id Room: ", this.id_room);
-	        this.$store.dispatch('room/getRoomParticipants', this.id_room);
-		});
+			this.$socket.on('refreshPlaylist', () => {
+				console.log("RECEIVED: Refresh Playlist - Id Room: ", this.id_room);
+				this.$store.dispatch('room/getPlaylist', this.id_room);
+			});
 
-		this.$socket.on('refreshPlaylist', () => {
-            console.log("RECEIVED: Refresh Playlist - Id Room: ", this.id_room);
-	        this.$store.dispatch('room/getPlaylist', this.id_room);
-		});
+			this.$socket.on('getCurrentState', (state) => {
+				console.log('RECEIVED: Current state is: ', state);
+				this.$store.dispatch('room/pause');
 
-		this.$socket.on('getCurrentState', (state) => {
-            console.log('RECEIVED: Current state is: ', state);
-			this.$store.dispatch('room/pause');
+				this.$refs.room?.jumpYTComponentTimeTo(state.startFrom);
+				this.$refs.room?.pauseYTComponent();
+			});
 
-			this.$refs.room?.jumpYTComponentTimeTo(state.startFrom);
-			this.$refs.room?.pauseYTComponent();
-        });
+			this.$socket.on("play", (startFrom) => {
+				console.log("RECEIVED: Play Music - start from: ", startFrom);
+				this.$store.dispatch("room/play");
+				
+				this.$refs.room?.jumpYTComponentTimeTo(startFrom);
+				this.$refs.room?.playYTComponent();
+			});
 
-		this.$socket.on("play", (startFrom) => {
-			console.log("RECEIVED: Play Music - start from: ", startFrom);
-	        this.$store.dispatch("room/play");
-			
-			this.$refs.room?.jumpYTComponentTimeTo(startFrom);
-			this.$refs.room?.playYTComponent();
-		});
+			this.$socket.on("pause", () => {
+				console.log("RECEIVED: Pause Music");
+				this.$store.dispatch("room/pause");
 
-		this.$socket.on("pause", () => {
-            console.log("RECEIVED: Pause Music");
-	        this.$store.dispatch("room/pause");
+				this.$refs.room?.pauseYTComponent();
+			});
 
-            this.$refs.room?.pauseYTComponent();
-		});
+			/* this.$socket.on('getCurrentSong', (id_song) => {
+				if (id_song && (id_song != this.$store.playingSong))
+					this.$store.dispatch('changePlayingSong', state.id_song);
+			}); */
 
-		/* this.$socket.on('getCurrentSong', (id_song) => {
-            if (id_song && (id_song != this.$store.playingSong))
-                this.$store.dispatch('changePlayingSong', state.id_song);
-        }); */
-
-		this.$socket.on('changeCurrentSong', (id_song) => {
-            console.log("RECEIVED: Change Current Song - Id Song: ", id_song);
-	        this.$store.dispatch('room/changePlayingSong', id_song);
-		});
+			this.$socket.on('changeCurrentSong', (id_song) => {
+				console.log("RECEIVED: Change Current Song - Id Song: ", id_song);
+				this.$store.dispatch('room/changePlayingSong', id_song);
+			});
+		}
 
 	}
 }
