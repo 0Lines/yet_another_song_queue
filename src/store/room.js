@@ -9,14 +9,15 @@ export default {
 
 		loadingRoomInfo: false,
 		roomInfo: new Room({}),
+		isPlaying: false,
+		startFrom: 0,
 
 		loadingParticipants: false,
 		participants: [],
 
 		loadingPlaylist: false,
-		playingSong: new Song({}),
-        isPlaying: false,
 		playlist: [],
+		playingSong: new Song({}),
 	},
 	getters: {
 		playlist(state) {
@@ -24,19 +25,21 @@ export default {
 		},
 		currentPlayingSong(state) {
 			return state.playingSong;
+		},
+		roomInfo(state) {
+			return state.roomInfo;
+		},
+		isPlaying(state) {
+			return state.isPlaying;
 		}
 	},
-	mutations: {
-		setLoadingRoom(state, value) {
-			state.loadingRoomInfo = value;
-		}
-	},
+	mutations: {},
 	actions: {
         play(store) {
-            store.state.isPlaying = true
+            store.state.isPlaying = true;
         },
         pause(store) {
-            store.state.isPlaying = false 
+            store.state.isPlaying = false;
         },
 		async addSongInPlaylist(store, mediaURL) {
 			const response = await this._vm.$axios.postHandled('/songs', {
@@ -91,7 +94,6 @@ export default {
 				store.state.participants = response;
 			} else {
 				store.state.participants = response.map(user => new User(user));
-                store.state.playingSong = new Song(store.state.playlist.shift() ?? {});
 			}
 
 			store.state.loadingParticipants = false;
@@ -114,21 +116,27 @@ export default {
             this._vm.$socket.emit('subscribeToRoom', store.state.roomInfo.id_room);
             this._vm.$socket.emit('getCurrentState', store.state.roomInfo.id_room);
         },
-        nextSong(store) {
-            const nextSong = store.state.playlist.find((song) => {
-                return song.priority > store.state.playingSong.priority;
+		previousSong(store) {
+			const currentSongIndex = store.state.playlist.findIndex((song) => {
+                return song.id_song == store.state.playingSong.id_song;
             });
-
-            if (nextSong)
-                store.dispatch('requestSongChange', nextSong.id_song);
-        },
-        previousSong(store) {
             const previousSong = store.state.playlist.find((song) => {
-                return song.priority < store.state.playingSong.priority;
+                return song.priority == currentSongIndex - 1;
             });
 
             if (previousSong)
                 store.dispatch('requestSongChange', previousSong.id_song);
+        },
+        nextSong(store) {
+			const currentSongIndex = store.state.playlist.findIndex((song) => {
+                return song.id_song == store.state.playingSong.id_song;
+            });
+            const nextSong = store.state.playlist.find((song) => {
+                return song.priority == currentSongIndex + 1;
+            });
+
+            if (nextSong)
+                store.dispatch('requestSongChange', nextSong.id_song);
         },
         requestSongChange(store, id_song) {
             console.log('Requesting Song Change - Id Song: ', id_song);
