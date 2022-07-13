@@ -78,9 +78,11 @@ export default {
 				} else {
 					store.state.roomInfo = new Room(response);
 
-					store.dispatch('subscribeToRoom');
-					store.dispatch('getPlaylist', id_room);
+					console.log('Subscribing to room', id_room);
+					this._vm.$socket.emit('subscribeToRoom', id_room);
 					store.dispatch('getRoomParticipants', id_room);
+					await store.dispatch('getPlaylist', id_room);
+					this._vm.$socket.emit('getCurrentState', id_room);
 				}
 			}
 
@@ -106,16 +108,10 @@ export default {
 				store.state.playlist = response;
 			} else {
 				store.state.playlist = response.map(song => new Song(song));
-                this._vm.$socket.emit('getCurrentSong', store.state.roomInfo.id_room);
 			}
 
 			store.state.loadingPlaylist = false;
 		},
-        subscribeToRoom(store) { 
-            console.log('Subscribing to room', store.state.roomInfo.id_room);
-            this._vm.$socket.emit('subscribeToRoom', store.state.roomInfo.id_room);
-            this._vm.$socket.emit('getCurrentState', store.state.roomInfo.id_room);
-        },
 		previousSong(store) {
 			const currentSongIndex = store.state.playlist.findIndex((song) => {
                 return song.id_song == store.state.playingSong.id_song;
@@ -150,9 +146,14 @@ export default {
 			const song = store.state.playlist.find((song) => {
                 return song.id_song == id_song;
             });
-			console.log(song);
-            store.state.playingSong = song;
+			console.log(store.state.playlist);
+			if(song)
+            	store.state.playingSong = song;
             //List should start from the current song
+        },
+		changePlayingSong2(store, song) { // 😉
+            console.log('Playing Song2 - Id Song: ', song);
+			store.state.playingSong = song;
         },
 	},
 	modules: {},
