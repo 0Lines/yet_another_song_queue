@@ -148,7 +148,11 @@ export default {
 			this.timeout = setTimeout(() => { this.shareTooltip = false }, 1500);
 		},
 		playCmon() {
-			this.$refs.room?.playYTComponent();
+			if(this.room.isPlaying){
+				setTimeout(() => {
+					this.$refs.room?.playYTComponent();
+				}, 2000)
+			}
 		}
 	},
 	created() {
@@ -175,7 +179,11 @@ export default {
 
 			this.$socket.on('getCurrentState', async (state) => {
 				console.log('RECEIVED: Current state is: ', state);
-				this.$store.dispatch('room/pause');
+				if(state.isPlaying)
+					this.$store.dispatch('room/play');
+				else
+					this.$store.dispatch('room/pause');
+				
 				await this.$store.dispatch('room/changePlayingSong', state.currentSongId);
 
 				this.$refs.room?.jumpYTComponentTimeTo(state.startFrom);
@@ -202,9 +210,22 @@ export default {
 					this.$store.dispatch('changePlayingSong', state.id_song);
 			}); */
 
-			this.$socket.on("changeCurrentSong", (song) => {
-				console.log("RECEIVED: Change Current Song - Id Song: ", song.id_song);
-				this.$store.dispatch('room/changePlayingSong2', song);
+			this.$socket.on('getCurrentState2', async (state) => {
+				console.log('RECEIVED: Current state is: ', state);
+				this.$store.dispatch('room/pause');
+				
+				await this.$store.dispatch('room/changePlayingSong2', state.song);
+
+				this.$refs.room?.jumpYTComponentTimeTo(state.startFrom);
+				this.$refs.room?.pauseYTComponent();
+			});
+
+			this.$socket.on("changeCurrentSong", async (id_song) => {
+				console.log("RECEIVED: Change Current Song - Song: ", id_song);
+				this.$store.dispatch('room/changePlayingSong', id_song);
+				this.$store.dispatch("room/pause");
+				this.$refs.room?.jumpYTComponentTimeTo(0);
+				this.$refs.room?.pauseYTComponent();
 			});
 		}
 	},

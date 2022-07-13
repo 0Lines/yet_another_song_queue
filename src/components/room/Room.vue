@@ -11,6 +11,8 @@
 			:isPlaying="isPlaying"
 			@play="requestPlay"
 			@pause="requestPause"
+			@previousSong="requestPreviousSong"
+			@nextSong="requestNextSong"
 		/>
 
 		<youtube v-if="currentPlayingSong.id_song" :video-id="currentPlayingSong.videoid" ref="youtube" style="height: 200px;"/>

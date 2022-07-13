@@ -124,12 +124,14 @@ export default {
                 store.dispatch('requestSongChange', previousSong.id_song);
         },
         nextSong(store) {
-			const currentSongIndex = store.state.playlist.findIndex((song) => {
+			const currentSong = store.state.playlist.find((song) => {
                 return song.id_song == store.state.playingSong.id_song;
             });
+
             const nextSong = store.state.playlist.find((song) => {
-                return song.priority == currentSongIndex + 1;
+				return song.priority == currentSong.priority + 1; //TODO THIS WAY OF GETTING THE SONG IS WRONG (cannot just put +1)
             });
+			console.log(nextSong);
 
             if (nextSong)
                 store.dispatch('requestSongChange', nextSong.id_song);
