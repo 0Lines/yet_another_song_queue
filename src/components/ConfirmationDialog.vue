@@ -1,5 +1,5 @@
 <template>
-	<v-dialog v-model="open" persistent scrollable max-width="300px">
+	<v-dialog v-model="open" persistent scrollable max-width="500px">
 		<v-card>
 
 			<v-card-title>{{title}}</v-card-title>
@@ -9,6 +9,7 @@
 			</v-card-text>
 
 			<v-card-actions>
+				<v-spacer/>
 				<v-btn color="blue darken-1" text @click="reject">{{rejectBtnText}}</v-btn>
 				<v-btn color="blue darken-1" text @click="accept">{{acceptBtnText}}</v-btn>
 			</v-card-actions>
