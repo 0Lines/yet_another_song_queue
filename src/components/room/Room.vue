@@ -15,7 +15,7 @@
 			@nextSong="requestNextSong"
 		/>
 
-		<youtube v-if="currentPlayingSong.id_song" :video-id="currentPlayingSong.videoid" ref="youtube" style="height: 200px;"/>
+		<youtube v-if="currentPlayingSong.id_song" :video-id="currentPlayingSong.videoid" ref="youtube" style="height: 200px; display: none;"/>
 
 		<PlayList :playlist="playlist" class="round-container mb-5"/>
     </v-sheet>
