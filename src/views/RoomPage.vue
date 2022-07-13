@@ -157,21 +157,21 @@ export default {
 		this.$store.dispatch('room/enterRoom', this.id_room);
 
 		/* TODO SEPARATE BELOW ROOM EVENTS IN ANOTHER FILE OR SOMETHING LIKE THAT... */
-
-		if(this.$socket._callbacks == undefined) { //ONLY REGISTER SOCKET EVENTS IF THEY WERE NOT YET REGISTERED (é meio gambi)
+		if(Object.keys(this.$socket._callbacks).length == 0) { //ONLY REGISTER SOCKET EVENTS IF THEY WERE NOT YET REGISTERED (é meio gambi)
 			this.$socket.on('refreshUsers', () => {
 				console.log("RECEIVED: Refresh Users - Id Room: ", this.id_room);
 				this.$store.dispatch('room/getRoomParticipants', this.id_room);
 			});
 
-			this.$socket.on('refreshPlaylist', () => {
+			this.$socket.on("refreshPlaylist", () => {
 				console.log("RECEIVED: Refresh Playlist - Id Room: ", this.id_room);
 				this.$store.dispatch('room/getPlaylist', this.id_room);
 			});
 
-			this.$socket.on('getCurrentState', (state) => {
+			this.$socket.on('getCurrentState', async (state) => {
 				console.log('RECEIVED: Current state is: ', state);
 				this.$store.dispatch('room/pause');
+				await this.$store.dispatch('room/changePlayingSong', state.currentSongId);
 
 				this.$refs.room?.jumpYTComponentTimeTo(state.startFrom);
 				this.$refs.room?.pauseYTComponent();
@@ -197,9 +197,9 @@ export default {
 					this.$store.dispatch('changePlayingSong', state.id_song);
 			}); */
 
-			this.$socket.on('changeCurrentSong', (id_song) => {
-				console.log("RECEIVED: Change Current Song - Id Song: ", id_song);
-				this.$store.dispatch('room/changePlayingSong', id_song);
+			this.$socket.on("changeCurrentSong", (song) => {
+				console.log("RECEIVED: Change Current Song - Id Song: ", song.id_song);
+				this.$store.dispatch('room/changePlayingSong2', song);
 			});
 		}
 
