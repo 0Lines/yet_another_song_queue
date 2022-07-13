@@ -78,8 +78,8 @@
             </v-container>
         </v-main>
 
-		<ConfirmationDialog @rejected="1==1" @accepted="1==1">
-			<div>confia</div>
+		<ConfirmationDialog ref="confirmationDialog" @rejected="1==1" @accepted="playCmon">
+			<div>Gostaria de escutar as músicas desta sala?</div>
 		</ConfirmationDialog>
     </v-card>
 </template>
@@ -147,6 +147,9 @@ export default {
 			clearTimeout(this.timeout);
 			this.timeout = setTimeout(() => { this.shareTooltip = false }, 1500);
 		},
+		playCmon() {
+			this.$refs.room?.playYTComponent();
+		}
 	},
 	created() {
 		if(!this.id_room) {
@@ -157,7 +160,9 @@ export default {
 		this.$store.dispatch('room/enterRoom', this.id_room);
 
 		/* TODO SEPARATE BELOW ROOM EVENTS IN ANOTHER FILE OR SOMETHING LIKE THAT... */
-		if(Object.keys(this.$socket._callbacks).length == 0) { //ONLY REGISTER SOCKET EVENTS IF THEY WERE NOT YET REGISTERED (é meio gambi)
+		//ONLY REGISTER SOCKET EVENTS IF THEY WERE NOT YET REGISTERED (ta meio gambi)
+		//this.$socket._callbacks sometimes is '{}' sometimes is undefined grr...
+		if(Object.keys(this.$socket._callbacks ?? {}).length == 0) { 
 			this.$socket.on('refreshUsers', () => {
 				console.log("RECEIVED: Refresh Users - Id Room: ", this.id_room);
 				this.$store.dispatch('room/getRoomParticipants', this.id_room);
@@ -202,7 +207,9 @@ export default {
 				this.$store.dispatch('room/changePlayingSong2', song);
 			});
 		}
-
+	},
+	mounted(){
+		this.$refs.confirmationDialog.openConfirmationDialog();
 	}
 }
 </script>

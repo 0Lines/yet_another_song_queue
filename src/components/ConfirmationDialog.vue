@@ -4,13 +4,9 @@
 
 			<v-card-title>{{title}}</v-card-title>
 
-			<v-divider />
-
-			<v-card-text style="height: 300px;">
+			<v-card-text style="max-height: 300px;">
 				<slot></slot>
 			</v-card-text>
-
-			<v-divider />
 
 			<v-card-actions>
 				<v-btn color="blue darken-1" text @click="reject">{{rejectBtnText}}</v-btn>
