@@ -4,18 +4,18 @@
 
 		<SongPlayer
 			class="round-container mb-5"
-			v-if="currentPlayingSong.id_song"
-			:songName="currentPlayingSong.name"
-			:songArtist="currentPlayingSong.artist"
-			:songThumbNail="currentPlayingSong.thumbnail_link"
-			:isPlaying="isPlaying"
+			v-if="mirroredJukebox.playingSong"
+			:songName="mirroredJukebox.playingSong.name"
+			:songArtist="mirroredJukebox.playingSong.artist"
+			:songThumbNail="mirroredJukebox.playingSong.thumbnail_link"
+			:isPlaying="mirroredJukebox.isPlaying"
 			@play="requestPlay"
 			@pause="requestPause"
 			@previousSong="requestPreviousSong"
 			@nextSong="requestNextSong"
 		/>
 
-		<youtube v-if="currentPlayingSong.id_song" :video-id="currentPlayingSong.videoid" ref="youtube" style="height: 200px; display: none;"/>
+		<youtube :video-id="mirroredJukebox.playingSong.videoid" ref="youtube" style="height: 200px;"/>
 
 		<PlayList :playlist="playlist" class="round-container mb-5"/>
     </v-sheet>
@@ -40,14 +40,36 @@ export default {
     },
     computed: {
         ...mapGetters({
-            currentPlayingSong: 'room/currentPlayingSong',
-            playlist: 'room/playlist',
-            isPlaying: 'room/isPlaying',
             roomInfo: 'room/roomInfo',
+            mirroredJukebox: 'room/mirroredJukebox',
+            playlist: 'room/playlist',
         }),
+		mirroredJukeboxClone() { //THIS CLONE IS A FIX FOR 'BUG' https://stackoverflow.com/questions/50682261/vue-watch-array-push-same-old-and-new-values
+			return JSON.parse(JSON.stringify(this.mirroredJukebox));
+		}
     },
-    watch: {},
+    watch: {
+		mirroredJukeboxClone: {
+			handler(newVal, oldVal) {
+				if(!oldVal.playingSong?.id_song || oldVal.playingSong.id_song != newVal.playingSong.id_song) {
+					setTimeout(() => { this.handleJukeboxChanges(newVal); }, 3000); //TODO THIS IS BAD (its waiting for the yt component to 'load')
+				} else {
+					this.handleJukeboxChanges(newVal);
+				}
+			},
+			deep: true
+		}
+	},
     methods: {
+		handleJukeboxChanges(newVal) {
+			if(newVal.isPlaying) {
+				this.$refs.youtube?.player.seekTo((Date.now() - newVal.startedAt)/1000); 
+				this.$refs.youtube?.player.playVideo();
+			} else {
+				this.$refs.youtube?.player.seekTo((newVal.stoppedAt - newVal.startedAt)/1000); 
+				this.$refs.youtube?.player.pauseVideo();
+			}
+		},
 		requestPlay() {
 			this.$socket.emit('play', this.roomInfo.id_room)
 		},
@@ -61,15 +83,6 @@ export default {
 		requestNextSong() {
             this.$store.dispatch('room/nextSong');
 		},
-		jumpYTComponentTimeTo(time) {
-			this.$refs.youtube?.player.seekTo(time); 
-		},
-		playYTComponent() {
-            this.$refs.youtube?.player.playVideo();
-		},
-		pauseYTComponent() {
-			this.$refs.youtube?.player.pauseVideo();
-		}
 	},
 }
 </script>

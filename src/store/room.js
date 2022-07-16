@@ -1,6 +1,7 @@
 import Song from "@/models/Song.js";
 import Room from "@/models/Room.js";
 import User from "@/models/User.js";
+import MirroredJukebox from "@/classes/MirroredJukebox";
 
 export default {
 	namespaced: true,
@@ -9,38 +10,28 @@ export default {
 
 		loadingRoomInfo: false,
 		roomInfo: new Room({}),
-		isPlaying: false,
-		startFrom: 0,
+
+		mirroredJukebox: new MirroredJukebox(),
 
 		loadingParticipants: false,
 		participants: [],
 
 		loadingPlaylist: false,
 		playlist: [],
-		playingSong: new Song({}),
 	},
 	getters: {
 		playlist(state) {
 			return state.playlist;
 		},
-		currentPlayingSong(state) {
-			return state.playingSong;
-		},
 		roomInfo(state) {
 			return state.roomInfo;
 		},
-		isPlaying(state) {
-			return state.isPlaying;
+		mirroredJukebox(state) {
+			return state.mirroredJukebox;
 		}
 	},
 	mutations: {},
 	actions: {
-        play(store) {
-            store.state.isPlaying = true;
-        },
-        pause(store) {
-            store.state.isPlaying = false;
-        },
 		async addSongInPlaylist(store, mediaURL) {
 			const response = await this._vm.$axios.postHandled('/songs', {
 				search_text: mediaURL,	//API RECEIVES LINK VIA SEARCH_TEXT
@@ -78,17 +69,17 @@ export default {
 				} else {
 					store.state.roomInfo = new Room(response);
 
-					console.log('Subscribing to room', id_room);
 					this._vm.$socket.emit('subscribeToRoom', id_room);
-					store.dispatch('getRoomParticipants', id_room);
-					await store.dispatch('getPlaylist', id_room);
-					this._vm.$socket.emit('getCurrentState', id_room);
+					store.dispatch('refreshRoomParticipants', id_room);
+					await store.dispatch('refreshPlaylist', id_room);
+					await store.dispatch('registerSocketRoomEvents', this._vm.$socket);
+					this._vm.$socket.emit('getCurrentState', id_room); 
 				}
 			}
 
 			store.state.loadingRoomInfo = false;
 		},
-		async getRoomParticipants(store, id_room) {
+		async refreshRoomParticipants(store, id_room) {
 			store.state.loadingParticipants = true;
 
 			const response = await this._vm.$axios.getHandled('/rooms/participants/', id_room);
@@ -100,7 +91,7 @@ export default {
 
 			store.state.loadingParticipants = false;
 		},
-		async getPlaylist(store, id_room) {
+		async refreshPlaylist(store, id_room) {
 			store.state.loadingPlaylist = true;
 
 			const response = await this._vm.$axios.getHandled('/songs/', id_room);
@@ -113,20 +104,17 @@ export default {
 			store.state.loadingPlaylist = false;
 		},
 		previousSong(store) {
-			const currentSongIndex = store.state.playlist.findIndex((song) => {
-                return song.id_song == store.state.playingSong.id_song;
-            });
+			const currentSong = store.state.mirroredJukebox.playingSong;
+
             const previousSong = store.state.playlist.find((song) => {
-                return song.priority == currentSongIndex - 1;
+                return song.priority == currentSong.priority - 1; //TODO THIS WAY OF GETTING THE SONG IS WRONG (cannot just put -1)
             });
 
             if (previousSong)
                 store.dispatch('requestSongChange', previousSong.id_song);
         },
         nextSong(store) {
-			const currentSong = store.state.playlist.find((song) => {
-                return song.id_song == store.state.playingSong.id_song;
-            });
+			const currentSong = store.state.mirroredJukebox.playingSong;
 
             const nextSong = store.state.playlist.find((song) => {
 				return song.priority == currentSong.priority + 1; //TODO THIS WAY OF GETTING THE SONG IS WRONG (cannot just put +1)
@@ -138,25 +126,64 @@ export default {
         },
         requestSongChange(store, id_song) {
             console.log('Requesting Song Change - Id Song: ', id_song);
-            this._vm.$socket.emit('changeCurrentSong', {
-                id_room: store.state.roomInfo.id_room,
-                id_song: id_song,
-            });
+            this._vm.$socket.emit('changeCurrentSong', { id_room: store.state.roomInfo.id_room, id_song: id_song });
         },
-        changePlayingSong(store, id_song) {
-            console.log('Playing Song - Id Song: ', id_song);
-			const song = store.state.playlist.find((song) => {
-                return song.id_song == id_song;
-            });
-			console.log(store.state.playlist);
-			if(song)
-            	store.state.playingSong = song;
-            //List should start from the current song
-        },
-		changePlayingSong2(store, song) { // 😉
-            console.log('Playing Song2 - Id Song: ', song);
-			store.state.playingSong = song;
-        },
+		registerSocketRoomEvents(store, socket) {
+			if(socket._callbacks?. refreshUsers == undefined) { //TODO (kinda bad) checking if 'refreshUsers' is not yet registered
+				
+				socket.on('refreshUsers', () => {
+					console.log("RECEIVED: Refresh Users");
+					store.dispatch('refreshRoomParticipants', store.state.roomInfo.id_room);
+				});
+
+				socket.on("refreshPlaylist", () => {
+					console.log("RECEIVED: Refresh Playlist");
+					store.dispatch('refreshPlaylist', store.state.roomInfo.id_room);
+
+					//TODO XGR (fix just for the first song... bug can still happens)
+					if(store.state.playlist.length == 0)
+						this._vm.$socket.emit('getCurrentState', store.state.roomInfo.id_room); 
+				});
+
+				socket.on("play", (songElapsedTime) => {
+					console.log("RECEIVED: Play Music - from time: ", songElapsedTime/1000);
+					store.state.mirroredJukebox.play(songElapsedTime)
+				});
+
+				socket.on("pause", (songElapsedTime) => {
+					console.log("RECEIVED: Pause Music - in time ", songElapsedTime/1000);
+					store.state.mirroredJukebox.pause(songElapsedTime)
+				});
+
+				socket.on('getCurrentState', (state) => {
+					console.log('RECEIVED: Current state is: ', state);
+
+					const playingSong = store.state.mirroredJukebox.playingSong;
+					if(!playingSong || playingSong.id_song != state.currentSongId) {
+						const song = store.state.playlist.find((song) => { return song.id_song == state.currentSongId });
+						console.log(store.state.playlist);
+						console.log(song);
+						if(song)
+							store.state.mirroredJukebox.changeSong(song);
+					}
+
+					if(state.isPlaying)
+						store.state.mirroredJukebox.play(state.songElapsedTime)
+					else
+						store.state.mirroredJukebox.pause(state.songElapsedTime)
+				});
+
+				socket.on("changeCurrentSong", (id_song) => {
+					console.log("RECEIVED: Change Current Song - Song: ", id_song);
+					console.log(store.state.playlist);
+					const song = store.state.playlist.find((song) => { return song.id_song == id_song });
+					console.log(song);
+					store.state.mirroredJukebox.changeSong(song);
+				});
+				return true;
+			}
+			return false;
+		}
 	},
 	modules: {},
 };

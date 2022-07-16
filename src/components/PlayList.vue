@@ -40,7 +40,6 @@ export default {
 	watch: {},
 	methods: {
 		removeSongFrom(song) {
-            console.log(song) 
 			this.$store.dispatch('room/removeSongInPlaylist', { id_song: song.id_song, id_room: song.id_room });
 		}
 	},

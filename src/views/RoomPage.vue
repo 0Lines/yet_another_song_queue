@@ -73,7 +73,7 @@
 					:errorMessage="room.pageError.errorMessage"
 				/>
 
-                <Room ref="room" v-else/>
+                <Room v-else/>
 
             </v-container>
         </v-main>
@@ -148,11 +148,7 @@ export default {
 			this.timeout = setTimeout(() => { this.shareTooltip = false }, 1500);
 		},
 		playCmon() {
-			if(this.room.isPlaying){
-				setTimeout(() => {
-					this.$refs.room?.playYTComponent();
-				}, 2000)
-			}
+			console.log("DURO (só dava play no YT component)");
 		}
 	},
 	created() {
@@ -162,72 +158,6 @@ export default {
 		}
 
 		this.$store.dispatch('room/enterRoom', this.id_room);
-
-		/* TODO SEPARATE BELOW ROOM EVENTS IN ANOTHER FILE OR SOMETHING LIKE THAT... */
-		//ONLY REGISTER SOCKET EVENTS IF THEY WERE NOT YET REGISTERED (ta meio gambi)
-		//this.$socket._callbacks sometimes is '{}' sometimes is undefined grr...
-		if(Object.keys(this.$socket._callbacks ?? {}).length == 0) { 
-			this.$socket.on('refreshUsers', () => {
-				console.log("RECEIVED: Refresh Users - Id Room: ", this.id_room);
-				this.$store.dispatch('room/getRoomParticipants', this.id_room);
-			});
-
-			this.$socket.on("refreshPlaylist", () => {
-				console.log("RECEIVED: Refresh Playlist - Id Room: ", this.id_room);
-				this.$store.dispatch('room/getPlaylist', this.id_room);
-			});
-
-			this.$socket.on('getCurrentState', async (state) => {
-				console.log('RECEIVED: Current state is: ', state);
-				if(state.isPlaying)
-					this.$store.dispatch('room/play');
-				else
-					this.$store.dispatch('room/pause');
-				
-				await this.$store.dispatch('room/changePlayingSong', state.currentSongId);
-
-				this.$refs.room?.jumpYTComponentTimeTo(state.startFrom);
-				this.$refs.room?.pauseYTComponent();
-			});
-
-			this.$socket.on("play", (startFrom) => {
-				console.log("RECEIVED: Play Music - start from: ", startFrom);
-				this.$store.dispatch("room/play");
-				
-				this.$refs.room?.jumpYTComponentTimeTo(startFrom);
-				this.$refs.room?.playYTComponent();
-			});
-
-			this.$socket.on("pause", () => {
-				console.log("RECEIVED: Pause Music");
-				this.$store.dispatch("room/pause");
-
-				this.$refs.room?.pauseYTComponent();
-			});
-
-			/* this.$socket.on('getCurrentSong', (id_song) => {
-				if (id_song && (id_song != this.$store.playingSong))
-					this.$store.dispatch('changePlayingSong', state.id_song);
-			}); */
-
-			this.$socket.on('getCurrentState2', async (state) => {
-				console.log('RECEIVED: Current state is: ', state);
-				this.$store.dispatch('room/pause');
-				
-				await this.$store.dispatch('room/changePlayingSong2', state.song);
-
-				this.$refs.room?.jumpYTComponentTimeTo(state.startFrom);
-				this.$refs.room?.pauseYTComponent();
-			});
-
-			this.$socket.on("changeCurrentSong", async (id_song) => {
-				console.log("RECEIVED: Change Current Song - Song: ", id_song);
-				this.$store.dispatch('room/changePlayingSong', id_song);
-				this.$store.dispatch("room/pause");
-				this.$refs.room?.jumpYTComponentTimeTo(0);
-				this.$refs.room?.pauseYTComponent();
-			});
-		}
 	},
 	mounted(){
 		this.$refs.confirmationDialog.openConfirmationDialog();
