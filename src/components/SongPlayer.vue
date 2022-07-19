@@ -1,37 +1,45 @@
 <template>
-    <v-sheet class="d-flex align-center">
-		<v-avatar class="ml-4" size="125">
-			<v-img class="spin" :class="imageClass" :src="songThumbNail" />
-		</v-avatar>
+    <v-sheet class="d-flex justify-center align-center">
+		<template v-if="loading">
+			<MusicLoading class="ma-4"/>
+		</template>
 
-		<v-card flat min-width="0" width="100%">
-			<v-card-title class="d-block text-truncate">
-				<v-icon class="mr-2" color="secondary"> mdi-music </v-icon>{{ songName }}
-			</v-card-title>
-			
-			<v-card-subtitle class="d-block text-truncate">
-				<v-icon class="mr-2" color="secondary"> mdi-account-music </v-icon>{{ songArtist }}
-			</v-card-subtitle>
+		<template v-else>
+			<v-avatar class="ml-4" size="125">
+				<v-img class="spin" :class="imageClass" :src="songThumbNail" />
+			</v-avatar>
 
-			<v-card-actions class="justify-center">
-				<v-btn icon x-large>
-					<v-icon size="54" color="secondary" @click="previousSong"> mdi-skip-previous </v-icon>
-				</v-btn>
+			<v-card flat min-width="0" width="100%">
+				<v-card-title class="d-block text-truncate">
+					<v-icon class="mr-2" color="secondary"> mdi-music </v-icon>{{ songName }}
+				</v-card-title>
+				
+				<v-card-subtitle class="d-block text-truncate">
+					<v-icon class="mr-2" color="secondary"> mdi-account-music </v-icon>{{ songArtist }}
+				</v-card-subtitle>
 
-				<v-btn icon x-large @click="playButtonFunction">
-					<v-icon size="58" color="secondary"> {{ playButtonIcon }} </v-icon>
-				</v-btn>
+				<v-card-actions class="justify-center">
+					<v-btn icon x-large>
+						<v-icon size="54" color="secondary" @click="previousSong"> mdi-skip-previous </v-icon>
+					</v-btn>
 
-				<v-btn icon x-large>
-					<v-icon size="54" color="secondary" @click="nextSong"> mdi-skip-next </v-icon>
-				</v-btn>
-			</v-card-actions>
-		</v-card>
+					<v-btn icon x-large @click="playButtonFunction">
+						<v-icon size="58" color="secondary"> {{ playButtonIcon }} </v-icon>
+					</v-btn>
+
+					<v-btn icon x-large>
+						<v-icon size="54" color="secondary" @click="nextSong"> mdi-skip-next </v-icon>
+					</v-btn>
+				</v-card-actions>
+			</v-card>
+		</template>
 
 	</v-sheet>
 </template>
 
 <script>
+import MusicLoading from '@/components/MusicLoading.vue';
+
 export default {
     props: {
 		songName: String,
@@ -39,6 +47,7 @@ export default {
 		songThumbNail: String,
 
 		isPlaying: Boolean,
+		loading:   Boolean,
     },
     mixins: {},
     data() {
@@ -46,7 +55,9 @@ export default {
         }
     },
     directives: {},
-    components: {},
+    components: {
+		MusicLoading
+	},
     computed: {
         playButtonIcon() {
             return this.isPlaying ? 'mdi-pause-circle' : 'mdi-play-circle'
