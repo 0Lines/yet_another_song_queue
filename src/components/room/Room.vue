@@ -3,8 +3,9 @@
 		<SearchBar class="round-container mb-5"/>
 
 		<SongPlayer
+			v-if="mirroredJukebox.playingSong.id_song"
 			class="round-container mb-5"
-			v-if="mirroredJukebox.playingSong"
+			:loading="fakeLoadingSong"
 			:songName="mirroredJukebox.playingSong.name"
 			:songArtist="mirroredJukebox.playingSong.artist"
 			:songThumbNail="mirroredJukebox.playingSong.thumbnail_link"
@@ -15,7 +16,14 @@
 			@nextSong="requestNextSong"
 		/>
 
-		<youtube :video-id="mirroredJukebox.playingSong.videoid" ref="youtube" style="height: 200px;"/>
+		<youtube
+			ref="youtube"
+			:video-id="mirroredJukebox.playingSong.videoid"
+			style="height: 200px;"
+			:player-vars="{ autoplay: mirroredJukeboxClone.isPlaying }"
+			@cued="cued"
+			@buffering="buffering"
+		/>
 
 		<PlayList :playlist="playlist" class="round-container mb-5"/>
     </v-sheet>
@@ -32,7 +40,9 @@ export default {
     props: {},
     mixins: {},
     data() {
-        return { }
+        return {
+			waitingForBuffering: false,
+		}
     },
     directives: {},
     components: { 
@@ -44,24 +54,40 @@ export default {
             mirroredJukebox: 'room/mirroredJukebox',
             playlist: 'room/playlist',
         }),
-		mirroredJukeboxClone() { //THIS CLONE IS A FIX FOR 'BUG' https://stackoverflow.com/questions/50682261/vue-watch-array-push-same-old-and-new-values
+		mirroredJukeboxClone() { //THIS CLONE IS A FIX FOR A KNOWN 'BUG' https://stackoverflow.com/questions/50682261/vue-watch-array-push-same-old-and-new-values
 			return JSON.parse(JSON.stringify(this.mirroredJukebox));
+		},
+		fakeLoadingSong: {
+			get() {
+				return this.$store.state.room.fakeLoadingSong;
+			},
+			set(v) {
+				this.$store.state.room.fakeLoadingSong = v;
+			}
 		}
     },
     watch: {
 		mirroredJukeboxClone: {
-			handler(newVal, oldVal) {
-				if(!oldVal.playingSong?.id_song || oldVal.playingSong.id_song != newVal.playingSong.id_song) {
-					setTimeout(() => { this.handleJukeboxChanges(newVal); }, 3000); //TODO THIS IS BAD (its waiting for the yt component to 'load')
-				} else {
-					this.handleJukeboxChanges(newVal);
-				}
+			handler(newVal) {
+				this.handleSongChanges(newVal);
 			},
 			deep: true
-		}
+		},
 	},
-    methods: {
-		handleJukeboxChanges(newVal) {
+	methods: {
+		cued() {
+			this.waitingForBuffering = true;
+			this.$refs.youtube?.player.playVideo();//TODO CATCH THE FATHER :)
+		},
+		buffering() {
+			if(this.waitingForBuffering) {
+				this.waitingForBuffering = false;
+				this.fakeLoadingSong = false;
+				this.handleSongChanges(this.mirroredJukebox);
+			}
+		},
+		handleSongChanges(newVal) {
+			console.warn(newVal);
 			if(newVal.isPlaying) {
 				this.$refs.youtube?.player.seekTo((Date.now() - newVal.startedAt)/1000); 
 				this.$refs.youtube?.player.playVideo();
@@ -84,6 +110,9 @@ export default {
             this.$store.dispatch('room/nextSong');
 		},
 	},
+	created() {
+		this.fakeLoadingSong = true;
+	}
 }
 </script>
 

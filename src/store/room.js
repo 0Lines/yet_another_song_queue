@@ -12,6 +12,7 @@ export default {
 		roomInfo: new Room({}),
 
 		mirroredJukebox: new MirroredJukebox(),
+		fakeLoadingSong: false,
 
 		loadingParticipants: false,
 		participants: [],
@@ -105,25 +106,30 @@ export default {
 		},
 		previousSong(store) {
 			const currentSong = store.state.mirroredJukebox.playingSong;
+			let previousSong = { priority: -1 };
 
-            const previousSong = store.state.playlist.find((song) => {
-                return song.priority == currentSong.priority - 1; //TODO THIS WAY OF GETTING THE SONG IS WRONG (cannot just put -1)
-            });
+			for (const song of store.state.playlist) {
 
-            if (previousSong)
-                store.dispatch('requestSongChange', previousSong.id_song);
-        },
-        nextSong(store) {
+				if(song.priority < currentSong.priority && song.priority > previousSong.priority)
+					previousSong = song;
+			}
+
+			if (previousSong.priority != -1)
+				store.dispatch('requestSongChange', previousSong.id_song);
+		},
+		nextSong(store) {
 			const currentSong = store.state.mirroredJukebox.playingSong;
+			let nextSong = { priority: Number.MAX_VALUE }; //TODO DO NOT LIKE THIS ONE :(
 
-            const nextSong = store.state.playlist.find((song) => {
-				return song.priority == currentSong.priority + 1; //TODO THIS WAY OF GETTING THE SONG IS WRONG (cannot just put +1)
-            });
-			console.log(nextSong);
+			for (const song of store.state.playlist) {
 
-            if (nextSong)
-                store.dispatch('requestSongChange', nextSong.id_song);
-        },
+				if(song.priority > currentSong.priority && song.priority < nextSong.priority)
+					nextSong = song;
+			}
+
+			if (nextSong.priority != Number.MAX_VALUE)
+				store.dispatch('requestSongChange', nextSong.id_song);
+		},
         requestSongChange(store, id_song) {
             console.log('Requesting Song Change - Id Song: ', id_song);
             this._vm.$socket.emit('changeCurrentSong', { id_room: store.state.roomInfo.id_room, id_song: id_song });
@@ -163,14 +169,16 @@ export default {
 						const song = store.state.playlist.find((song) => { return song.id_song == state.currentSongId });
 						console.log(store.state.playlist);
 						console.log(song);
-						if(song)
+						if(song) {
+							store.state.fakeLoadingSong = true;
 							store.state.mirroredJukebox.changeSong(song);
+						}
 					}
 
 					if(state.isPlaying)
-						store.state.mirroredJukebox.play(state.songElapsedTime)
+						store.state.mirroredJukebox.play(state.songElapsedTime);
 					else
-						store.state.mirroredJukebox.pause(state.songElapsedTime)
+						store.state.mirroredJukebox.pause(state.songElapsedTime);
 				});
 
 				socket.on("changeCurrentSong", (id_song) => {
@@ -178,7 +186,10 @@ export default {
 					console.log(store.state.playlist);
 					const song = store.state.playlist.find((song) => { return song.id_song == id_song });
 					console.log(song);
-					store.state.mirroredJukebox.changeSong(song);
+					if(song) {
+						store.state.fakeLoadingSong = true;
+						store.state.mirroredJukebox.changeSong(song);
+					}
 				});
 				return true;
 			}
