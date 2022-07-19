@@ -77,10 +77,6 @@
 
             </v-container>
         </v-main>
-
-		<ConfirmationDialog ref="confirmationDialog" @rejected="1==1" @accepted="playCmon">
-			<div>Gostaria de escutar as músicas desta sala?</div>
-		</ConfirmationDialog>
     </v-card>
 </template>
 
@@ -90,7 +86,6 @@ import UserAvatar from '@/components/user/UserAvatar.vue'
 import UserList from '@/components/user/UserList.vue'
 import ApiError from '@/components/ApiError.vue'
 import UserListItem from '@/components/user/UserListItem.vue'
-import ConfirmationDialog from '@/components/ConfirmationDialog.vue'
 
 export default {
     props: {
@@ -106,7 +101,7 @@ export default {
     },
     directives: {},
     components: { 
-        UserAvatar, UserListItem, UserList, Room, ApiError, ConfirmationDialog
+        UserAvatar, UserListItem, UserList, Room, ApiError
     },
     computed: {
 		room: {
@@ -146,9 +141,6 @@ export default {
 			this.shareTooltip = true;
 			clearTimeout(this.timeout);
 			this.timeout = setTimeout(() => { this.shareTooltip = false }, 1500);
-		},
-		playCmon() {
-			console.log("DURO (só dava play no YT component)");
 		}
 	},
 	created() {
@@ -158,9 +150,6 @@ export default {
 		}
 
 		this.$store.dispatch('room/enterRoom', this.id_room);
-	},
-	mounted(){
-		this.$refs.confirmationDialog.openConfirmationDialog();
 	}
 }
 </script>
