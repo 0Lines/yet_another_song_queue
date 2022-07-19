@@ -167,8 +167,6 @@ export default {
 					const playingSong = store.state.mirroredJukebox.playingSong;
 					if(!playingSong || playingSong.id_song != state.currentSongId) {
 						const song = store.state.playlist.find((song) => { return song.id_song == state.currentSongId });
-						console.log(store.state.playlist);
-						console.log(song);
 						if(song) {
 							store.state.fakeLoadingSong = true;
 							store.state.mirroredJukebox.changeSong(song);
@@ -183,9 +181,7 @@ export default {
 
 				socket.on("changeCurrentSong", (id_song) => {
 					console.log("RECEIVED: Change Current Song - Song: ", id_song);
-					console.log(store.state.playlist);
 					const song = store.state.playlist.find((song) => { return song.id_song == id_song });
-					console.log(song);
 					if(song) {
 						store.state.fakeLoadingSong = true;
 						store.state.mirroredJukebox.changeSong(song);

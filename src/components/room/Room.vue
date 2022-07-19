@@ -20,12 +20,16 @@
 			ref="youtube"
 			:video-id="mirroredJukebox.playingSong.videoid"
 			style="height: 200px;"
-			:player-vars="{ autoplay: mirroredJukeboxClone.isPlaying }"
+			@ready="cued"
 			@cued="cued"
 			@buffering="buffering"
 		/>
 
 		<PlayList :playlist="playlist" class="round-container mb-5"/>
+
+		<ConfirmationDialog ref="confirmationDialog" @rejected="1==1" @accepted="playFromConfirmation">
+			<div>Gostaria de escutar as músicas desta sala?</div>
+		</ConfirmationDialog>
     </v-sheet>
 </template>
 
@@ -33,6 +37,7 @@
 import SongPlayer from '@/components/SongPlayer.vue'
 import PlayList from '@/components/PlayList.vue'
 import SearchBar from '@/components/SearchBar.vue'
+import ConfirmationDialog from '@/components/ConfirmationDialog.vue'
 
 import { mapGetters } from 'vuex'
 
@@ -46,7 +51,7 @@ export default {
     },
     directives: {},
     components: { 
-        PlayList, SongPlayer, SearchBar,
+        PlayList, SongPlayer, SearchBar, ConfirmationDialog
     },
     computed: {
         ...mapGetters({
@@ -75,15 +80,20 @@ export default {
 		},
 	},
 	methods: {
+		playFromConfirmation() {
+			this.handleSongChanges(this.mirroredJukeboxClone);
+		},
 		cued() {
+			console.log("cued");
 			this.waitingForBuffering = true;
 			this.$refs.youtube?.player.playVideo();//TODO CATCH THE FATHER :)
 		},
 		buffering() {
+			console.log("buffering");
 			if(this.waitingForBuffering) {
 				this.waitingForBuffering = false;
 				this.fakeLoadingSong = false;
-				this.handleSongChanges(this.mirroredJukebox);
+				this.handleSongChanges(this.mirroredJukeboxClone);
 			}
 		},
 		handleSongChanges(newVal) {
@@ -110,7 +120,8 @@ export default {
             this.$store.dispatch('room/nextSong');
 		},
 	},
-	created() {
+	mounted() {
+		this.$refs.confirmationDialog.openConfirmationDialog();
 		this.fakeLoadingSong = true;
 	}
 }
