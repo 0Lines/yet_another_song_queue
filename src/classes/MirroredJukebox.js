@@ -7,15 +7,11 @@ export default class MirroredJukebox {
 	stoppedAt = 0;
 
     constructor() {
-        this.resetJukebox();
-    }
-
-	resetJukebox() {
-		this.playingSong = new Song({}),
+        this.playingSong = new Song({}),
 		this.isPlaying = false;
 		this.startedAt = 0;
 		this.stoppedAt = 0;
-	}
+    }
 
 	play(songElapsedTime) {
 		this.isPlaying = true;
@@ -28,8 +24,7 @@ export default class MirroredJukebox {
 	}
 
 	changeSong(newSong) {
-		this.resetJukebox();
-		this.playingSong = newSong;
-		this.play(0);
+		this.playingSong = newSong,
+		this.startedAt = Date.now();
 	}
 }
